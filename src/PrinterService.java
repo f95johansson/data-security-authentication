@@ -14,7 +14,7 @@ interface RMIPrinter extends Remote {
   public void setConfig(String parameter, String value) throws RemoteException;   // sets the parameter to value
 }
 
-class PrinterService extends UnicastRemoteObject implements RMIComputer {
+class PrinterService extends UnicastRemoteObject implements RMIPrinter {
   
   public PrinterService() throws RemoteException {
     super();
