@@ -8,6 +8,7 @@ public class Backend {
       try {
         Registry registry = LocateRegistry.createRegistry(8099);
         registry.rebind("printer", new PrinterService());
+        System.out.println("Server started :)");
       } catch(RemoteException e) {
         System.out.println("Erroor while creating the server");
       }
