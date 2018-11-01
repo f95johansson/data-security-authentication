@@ -51,4 +51,12 @@ public class ClientTest {
         assertTrue(queue[0].contains(fileName));
         assertTrue(queue[1].contains(fileName2));
     }
+
+    @Test
+    public void should_change_state() throws RemoteException {
+        rmiPrinter.stop();
+        assertEquals(Status.Off.name(), rmiPrinter.status());
+        rmiPrinter.start();
+        assertEquals(Status.On.name(), rmiPrinter.status());
+    }
 }

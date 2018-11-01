@@ -15,10 +15,6 @@ interface RMIPrinter extends Remote {
   void setConfig(String parameter, String value) throws RemoteException;   // sets the parameter to value
 }
 
-enum Status {
-  On, Off, Printing
-}
-
 class Job{
   public int jobNumber;
   public String fileName;
@@ -104,7 +100,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
   
   public String status() throws RemoteException {
     log("STATUS");
-    return "Status: " + currentStatus.name();
+    return currentStatus.name();
   }
   
   public String readConfig(String parameter) throws RemoteException {
