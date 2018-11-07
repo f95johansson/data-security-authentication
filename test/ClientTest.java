@@ -13,6 +13,7 @@ public class ClientTest {
 
     private static RMIPrinter rmiPrinter;
 
+
     @BeforeClass
     public static void SetPrinter() {
         Backend.StartServer();
