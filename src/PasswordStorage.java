@@ -32,8 +32,7 @@ public class PasswordStorage {
             //statement.executeUpdate("DELETE FROM person WHERE id='1'");
 
             ResultSet resultSet = statement.executeQuery("SELECT * from person");
-            while(resultSet.next())
-            {
+            while(resultSet.next()) {
                 // iterate & read the result set
                 System.out.println("name = " + resultSet.getString("name"));
                 System.out.println("id = " + resultSet.getInt("id"));
