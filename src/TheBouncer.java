@@ -17,16 +17,21 @@ public class TheBouncer {
     private final TheHasher hasher;
     private HashMap<String, LocalDateTime> clubPasses;
 
-    public TheBouncer() {
-        keeper = new TheKeeperOfRecords();
-        hasher = new TheHasher();
+    public TheBouncer(TheKeeperOfRecords keeper, TheHasher hasher) {
+        this.keeper = keeper;
+        this.hasher = hasher;
         clubPasses = new HashMap<>();
+    }
+
+    public boolean validClubStamp(String sessionKey) {
+        LocalDateTime expireDate = clubPasses.getOrDefault(sessionKey, null);
+        return expireDate != null && expireDate.isAfter(LocalDateTime.now());
     }
 
     public String enterClub(String username, String password) {
         if (!checkID(username, password)) return null;
 
-        String sessionKey = null;
+        String sessionKey;
         try {
             sessionKey = getNewSessionKey();
         } catch (NoSuchAlgorithmException e) {
@@ -44,14 +49,10 @@ public class TheBouncer {
         return TheHasher.toHex(key);
     }
 
-    public boolean checkID(String username, String password) {
+    private boolean checkID(String username, String password) {
         try {
-            User user = keeper.getUser(username);
-            if (user != null) {
-                return user.hash.equals(hasher.toHash(password, user.salt));
-            } else {
-                return false;
-            }
+            User user = keeper.getUser(User.formatUserName(username));
+            return user != null && user.hash.equals(hasher.toHash(password, user.salt));
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.err.println(e.getMessage());
             return false;

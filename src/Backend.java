@@ -10,7 +10,7 @@ public class Backend {
           registry.rebind("printer", new PrinterService());
           System.out.println("Server started :)");
       } catch(RemoteException e) {
-          System.out.println("Error while creating the server");
+          System.out.println("Error while creating the server: " + e.getMessage());
       }
   }
   

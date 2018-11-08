@@ -8,21 +8,25 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class TheKeeperOfRecords {
 
-    private final String PASSWORD_PATH =  "thesearenotpassword-goaway.passwords";
+    private final String PASSWORD_PATH =  "Passwords.txt";
 
     public User getUser(String username) throws IOException {
-        return Arrays.stream(getAllUsers()).filter(user -> user.username.equals(username)).findFirst().orElse(null);
+        return getAllUsers()
+                .filter(user -> user.username.equals(username))
+                .findFirst()
+                .orElse(null);
     }
 
     public void updatePassword(String username, String salt, String newHashPassword) throws IOException {
-
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
-            Arrays.stream(getAllUsers())
+            getAllUsers()
                     .map(user -> {
                         if (user.username.equals(username)) {
                             return new User(username, salt, newHashPassword);
@@ -39,9 +43,12 @@ public class TheKeeperOfRecords {
         }
     }
 
-    private User[] getAllUsers() throws IOException {
-        String[] content = new String(Files.readAllBytes(Paths.get(PASSWORD_PATH))).split("\n");
-        return Arrays.stream(content)
+    protected String[] passwordLines() throws IOException {
+        return new String(Files.readAllBytes(Paths.get(PASSWORD_PATH))).split("\n");
+    }
+
+    private Stream<User> getAllUsers() throws IOException {
+        return Arrays.stream(passwordLines())
                 .filter(line -> !line.startsWith("#"))
                 .map(line -> {
                     try {
@@ -52,7 +59,17 @@ public class TheKeeperOfRecords {
                         return null;
                     }
                 })
-                .filter(Objects::nonNull)
-                .toArray(User[]::new);
+                .filter(Objects::nonNull);
+    }
+
+
+    public void addUser(User user) throws IOException {
+        String lineToAppend = user.toString() + "\n";
+        Files.write(Paths.get(PASSWORD_PATH), lineToAppend.getBytes(), StandardOpenOption.APPEND);
+    }
+
+    public boolean userWithNameExists(String username) throws IOException {
+        return getAllUsers()
+                .anyMatch(user -> user.username.equals(username));
     }
 }

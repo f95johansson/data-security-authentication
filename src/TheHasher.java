@@ -23,7 +23,7 @@ public class TheHasher {
         return toHex(hash);
     }
 
-    public String generateSalt() throws NoSuchAlgorithmException {
+    public static String generateSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);

@@ -11,15 +11,16 @@ public class User {
     public final String hash;
 
     public User(String username, String salt, String hash) {
-        if (username.contains(",")) {
-            username = username.replace(",","");
-        }
-        this.username = username;
+        this.username = User.formatUserName(username);
         this.salt = salt;
         this.hash = hash;
     }
 
     public String toString() {
         return String.format("%s,%s,%s", username, salt, hash);
+    }
+
+    public static String formatUserName(String username) {
+        return username.replace(",", "");
     }
 }
