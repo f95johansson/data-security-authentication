@@ -49,11 +49,11 @@ public class TheKeeperOfRecords {
 
     private Stream<User> getAllUsers() throws IOException {
         return Arrays.stream(passwordLines())
-                .filter(line -> !line.startsWith("#"))
+                .filter(line -> line.length() > 0 && !line.startsWith("#"))
                 .map(line -> {
                     try {
-                        String[] attrs = line.split(",");
-                        return new User(attrs[0], attrs[1], attrs[2]);
+                        String[] words = line.split(",");
+                        return new User(words[0], words[1], words[2]);
                     } catch (IndexOutOfBoundsException e) {
                         System.err.println("line: " + line + " was bad");
                         return null;
@@ -71,5 +71,9 @@ public class TheKeeperOfRecords {
     public boolean userWithNameExists(String username) throws IOException {
         return getAllUsers()
                 .anyMatch(user -> user.username.equals(username));
+    }
+
+    public void clearFile() throws IOException {
+        Files.write(Paths.get(PASSWORD_PATH), "".getBytes());
     }
 }

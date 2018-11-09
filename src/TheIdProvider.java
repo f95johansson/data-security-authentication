@@ -38,4 +38,12 @@ public class TheIdProvider {
 
         return true;
     }
+
+    public void burnThePlace() {
+        try {
+            keeper.clearFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

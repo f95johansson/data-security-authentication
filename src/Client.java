@@ -4,19 +4,28 @@ import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 
 public class Client {
-  
-  public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
-      RMIPrinter printer = (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
 
-      //this only works since they are sharing the same files, impossible to do remotely
-      TheIdProvider theIdProvider = new TheIdProvider(new TheKeeperOfRecords(), new TheHasher());
-      theIdProvider.addUser("hej", "password");
-      String sessionKey = printer.logIn("hej", "password");
+    public static final String DEFAULT_USERNAME = "Cecilia";
+    public static final String DEFAULT_PASSWORD = "Passw0rd123";
 
-      printer.print("test.docx", "MyAwesomePrinter", sessionKey);
+    private static void clearPasswords() {
+        //this only works since they are sharing the same files, impossible to do remotely
+        TheIdProvider theIdProvider = new TheIdProvider(new TheKeeperOfRecords(), new TheHasher());
+        theIdProvider.burnThePlace();
+        theIdProvider.addUser(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+    }
 
-      printer.setConfig("Yo", "It works", sessionKey);
-      String value = printer.readConfig("Yo", sessionKey);
-      System.out.println(value);
-  }
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+        clearPasswords();
+
+        RMIPrinter printer = (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
+
+        String sessionKey = printer.logIn(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+
+        printer.print("test.docx", "MyAwesomePrinter", sessionKey);
+
+        printer.setConfig("Yo", "It works", sessionKey);
+        String value = printer.readConfig("Yo", sessionKey);
+        System.out.println(value);
+    }
 } 
