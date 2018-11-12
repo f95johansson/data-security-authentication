@@ -16,7 +16,11 @@ public class Client {
     }
 
     public static RMIPrinter startClient() throws RemoteException, NotBoundException, MalformedURLException {
-        return (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
+        return startClient(8099);
+    }
+
+    public static RMIPrinter startClient(int port) throws RemoteException, NotBoundException, MalformedURLException {
+        return (RMIPrinter) Naming.lookup("rmi://localhost:" + port + "/printer");
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {

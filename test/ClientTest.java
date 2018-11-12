@@ -17,7 +17,7 @@ public class ClientTest {
 
     @BeforeClass
     public static void SetPrinter() throws IOException {
-        Backend.StartServer();
+        Backend.startServer(8081);
 
         Users keeper = new Users();
         if (!keeper.userWithNameExists("hej")) {
@@ -26,7 +26,7 @@ public class ClientTest {
         }
 
         try {
-            rmiPrinter = (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
+            rmiPrinter = Client.startClient(8081);
             sessionKey = rmiPrinter.logInSession("hej", "password");
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
             e.printStackTrace();

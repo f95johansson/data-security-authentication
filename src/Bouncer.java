@@ -10,30 +10,29 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Set;
 
 public class Bouncer {
     private final Users users;
-    private final HashMap<String, LocalDateTime> sessionKeys;
-    private final HashMap<String, LocalDateTime> oneTimeKeys;
+    private final HashMap<String, UserToken> sessionKeys;
 
     public Bouncer(Users user) {
         this.users = user;
         sessionKeys = new HashMap<>();
-        oneTimeKeys = new HashMap<>();
     }
 
-    public boolean validKey(String key) {
-        if (key == null) return false;
+    //returns null if not valid otherwise returns name
+    public String validSessionKey(String sessionKey) {
+        if (sessionKey == null) return null;
 
-        LocalDateTime oneTimeKeyExpiration = oneTimeKeys.getOrDefault(key, null);
-        if (oneTimeKeyExpiration != null) {
-            oneTimeKeys.remove(key);
-            return oneTimeKeyExpiration.isAfter(LocalDateTime.now());
+        UserToken sessionUserToken = sessionKeys.getOrDefault(sessionKey, null);
+        if (sessionUserToken == null) {
+            return null;
+        } else if (sessionUserToken.expireTime.isBefore(LocalDateTime.now())) {
+            sessionKeys.remove(sessionKey);
+            return null;
+        } else {
+            return sessionUserToken.username;
         }
-
-        LocalDateTime expireDate = sessionKeys.getOrDefault(key, null);
-        return expireDate != null && expireDate.isAfter(LocalDateTime.now());
     }
 
     public String startSession(String username, String password) {
@@ -41,31 +40,16 @@ public class Bouncer {
 
         String sessionKey;
         try {
-            sessionKey = getNonce();
+            sessionKey = generateSessionKey();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
-        sessionKeys.put(sessionKey, LocalDateTime.now().plusHours(2));
+        sessionKeys.put(sessionKey, new UserToken(username, LocalDateTime.now().plusHours(2)));
         return sessionKey;
     }
 
-    public String oneTimeKey(String username, String password) {
-        if (!validLogin(username, password)) return null;
-
-        String sessionKey;
-        try {
-            sessionKey = getNonce();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        oneTimeKeys.put(sessionKey, LocalDateTime.now().plusMinutes(30));
-        return sessionKey;
-    }
-
-    private static String getNonce() throws NoSuchAlgorithmException {
+    private static String generateSessionKey() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] key = new byte[32];
         sr.nextBytes(key);

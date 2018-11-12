@@ -22,7 +22,4 @@ interface RMIPrinter extends Remote {
 
     //returns sessionkey
     String logInSession(String username, String password) throws RemoteException;
-
-    //returns a key valid for only one execution
-    String logInOneTimeUse(String username, String password) throws RemoteException;
 }

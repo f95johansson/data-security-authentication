@@ -1,5 +1,4 @@
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -8,15 +7,23 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 /**
- * This suite makes sure that no function can be called from the client without verification
+ * This suite tests so no function can be called from the client without verification
  */
 public class SecurityTest {
 
     private static RMIPrinter printer;
     @BeforeClass
-    public static void StartBackend() throws RemoteException, NotBoundException, MalformedURLException {
-        Backend.StartServer();
-        printer = Client.startClient();
+    public static void StartUp() throws RemoteException, NotBoundException, MalformedURLException {
+        UserRegistration userRegistration = new UserRegistration(new Users());
+        String name = "validUser";
+        String psw = "validPassw0rd";
+        userRegistration.addUser(name, psw);
+
+        //adds one real key to the system
+        final int port = 8181;
+        Backend.startServer(port);
+        printer = Client.startClient(port);
+        printer.logInSession(name, psw);
     }
 
     @Test(expected = RemoteException.class)
