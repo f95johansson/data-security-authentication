@@ -10,9 +10,9 @@ public class Client {
 
     private static void clearPasswords() {
         //this only works since they are sharing the same files, impossible to do remotely
-        TheIdProvider theIdProvider = new TheIdProvider(new TheKeeperOfRecords(), new TheHasher());
-        theIdProvider.burnThePlace();
-        theIdProvider.addUser(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+        UserRegistration userRegistration = new UserRegistration(new Users());
+        userRegistration.burnThePlace();
+        userRegistration.addUser(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {

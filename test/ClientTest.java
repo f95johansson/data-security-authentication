@@ -19,10 +19,10 @@ public class ClientTest {
     public static void SetPrinter() throws IOException {
         Backend.StartServer();
 
-        TheKeeperOfRecords keeper = new TheKeeperOfRecords();
+        Users keeper = new Users();
         if (!keeper.userWithNameExists("hej")) {
-            TheIdProvider theIdProvider = new TheIdProvider(keeper, new TheHasher());
-            theIdProvider.addUser("hej", "password");
+            UserRegistration userRegistration = new UserRegistration(keeper);
+            userRegistration.addUser("hej", "password");
         }
 
         try {

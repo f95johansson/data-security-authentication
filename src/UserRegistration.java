@@ -2,13 +2,11 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
-public class TheIdProvider {
-    private TheKeeperOfRecords keeper;
-    private TheHasher hasher;
+public class UserRegistration {
+    private Users keeper;
 
-    public TheIdProvider(TheKeeperOfRecords keeper, TheHasher hasher) {
+    public UserRegistration(Users keeper) {
         this.keeper = keeper;
-        this.hasher = hasher;
     }
 
     public boolean addUser(String username, String password) {
@@ -22,8 +20,8 @@ public class TheIdProvider {
         String salt;
         String hashedPassword;
         try {
-            salt = hasher.generateSalt();
-            hashedPassword = hasher.toHash(password, salt);
+            salt = Crypto.generateSalt();
+            hashedPassword = Crypto.toHash(password, salt);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
             return false;

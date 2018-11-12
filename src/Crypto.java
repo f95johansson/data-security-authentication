@@ -11,11 +11,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
-public class TheHasher {
-
+public class Crypto {
     private static final int ITERATIONS = 1000;
 
-    public String toHash(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private Crypto() {}
+
+    public static String toHash(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
         PBEKeySpec spec = new PBEKeySpec(chars, fromHex(salt), ITERATIONS, 64 * 8);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -51,5 +52,4 @@ public class TheHasher {
         }
         return data;
     }
-
 }

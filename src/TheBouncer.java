@@ -13,23 +13,21 @@ import java.util.HashMap;
 
 public class TheBouncer {
 
-    private final TheKeeperOfRecords keeper;
-    private final TheHasher hasher;
+    private final Users users;
     private HashMap<String, LocalDateTime> clubPasses;
 
-    public TheBouncer(TheKeeperOfRecords keeper, TheHasher hasher) {
-        this.keeper = keeper;
-        this.hasher = hasher;
+    public TheBouncer(Users user) {
+        this.users = user;
         clubPasses = new HashMap<>();
     }
 
-    public boolean validClubStamp(String sessionKey) {
+    public boolean validSessionKey(String sessionKey) {
         LocalDateTime expireDate = clubPasses.getOrDefault(sessionKey, null);
         return expireDate != null && expireDate.isAfter(LocalDateTime.now());
     }
 
     public String enterClub(String username, String password) {
-        if (!checkID(username, password)) return null;
+        if (!validLogin(username, password)) return null;
 
         String sessionKey;
         try {
@@ -46,13 +44,13 @@ public class TheBouncer {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] key = new byte[32];
         sr.nextBytes(key);
-        return TheHasher.toHex(key);
+        return Crypto.toHex(key);
     }
 
-    private boolean checkID(String username, String password) {
+    private boolean validLogin(String username, String password) {
         try {
-            User user = keeper.getUser(User.formatUserName(username));
-            return user != null && user.hash.equals(hasher.toHash(password, user.salt));
+            User user = users.getUser(User.formatUserName(username));
+            return user != null && user.hash.equals(Crypto.toHash(password, user.salt));
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.err.println(e.getMessage());
             return false;

@@ -19,7 +19,7 @@ public class TheBouncerTest {
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "psw123";
 
-    private class MockRecords extends TheKeeperOfRecords {
+    private class MockRecords extends Users {
         Set<String> lines = new HashSet<>();
 
         @Override
@@ -33,14 +33,14 @@ public class TheBouncerTest {
     }
 
     private void addUser(String username, String password) {
-        TheIdProvider ids = new TheIdProvider(mockRecords, new TheHasher());
+        UserRegistration ids = new UserRegistration(mockRecords);
         ids.addUser(username, password);
     }
 
     @Before
     public void before() {
         mockRecords = new MockRecords();
-        bouncer = new TheBouncer(mockRecords, new TheHasher());
+        bouncer = new TheBouncer(mockRecords);
     }
 
     @Test
