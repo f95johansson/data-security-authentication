@@ -27,7 +27,7 @@ public class ClientTest {
 
         try {
             rmiPrinter = (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
-            sessionKey = rmiPrinter.logIn("hej", "password");
+            sessionKey = rmiPrinter.logInSession("hej", "password");
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
             e.printStackTrace();
         }

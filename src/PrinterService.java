@@ -9,9 +9,10 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     private List<Job> jobs = new LinkedList<>();
     private Status currentStatus = Status.On;
 
-    private TheBouncer bouncer = new TheBouncer(new Users());
+    private Bouncer bouncer = new Bouncer(new Users());
 
     private int uniqueIDGenerator = 0;
+    private final RemoteException NOT_LOGGED_IN = new RemoteException("You are not a valid user, please log in");
 
     public PrinterService() throws RemoteException {
         super();
@@ -26,7 +27,8 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     public void print(String filename, String printer, String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
 
         log("PRINT", "(" + filename + ", " + printer + ")");
         pushPrintJob(filename, printer);
@@ -37,7 +39,9 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     public String queue(String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return null;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("QUEUE");
 
         return jobs.stream()
@@ -47,7 +51,9 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     public void topQueue(int job, String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("TOP QUEUE", String.valueOf(job));
 
         Job toMove = jobs.stream()
@@ -64,19 +70,25 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     public void start(String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("START");
         currentStatus = Status.On;
     }
 
     public void stop(String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("STOP");
         currentStatus = Status.Off;
     }
 
     public void restart(String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("RESTART");
         stop(sessionKey);
         jobs.clear();
@@ -84,25 +96,36 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     public String status(String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return null;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("STATUS");
         return currentStatus.name();
     }
 
     public String readConfig(String parameter, String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return null;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("READ CONFIG", parameter);
-        return settings.getOrDefault(parameter, "[No such setting, use setConfig first]");
+        return settings.getOrDefault(parameter, null);
     }
 
     public void setConfig(String parameter, String value, String sessionKey) throws RemoteException {
-        if (!bouncer.validSessionKey(sessionKey)) return;
+        if (!bouncer.validKey(sessionKey))
+            throw NOT_LOGGED_IN;
+        
         log("SET CONFIG", "(" + parameter + ", " + value + ")");
         settings.put(parameter, value);
     }
 
     @Override
-    public String logIn(String username, String password) {
-        return bouncer.enterClub(username, password);
+    public String logInSession(String username, String password) {
+        return bouncer.startSession(username, password);
+    }
+
+    @Override
+    public String logInOneTimeUse(String username, String password) {
+        return bouncer.oneTimeKey(username, password);
     }
 }

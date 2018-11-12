@@ -1,5 +1,5 @@
 /*
- * File: TheBouncerTest.java
+ * File: BouncerTest.java
  * Author: Fredrik Johnson
  * Date: 2018-11-07
  */
@@ -12,9 +12,9 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class TheBouncerTest {
+public class BouncerTest {
 
-    private TheBouncer bouncer;
+    private Bouncer bouncer;
     private MockRecords mockRecords;
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "psw123";
@@ -40,24 +40,40 @@ public class TheBouncerTest {
     @Before
     public void before() {
         mockRecords = new MockRecords();
-        bouncer = new TheBouncer(mockRecords);
+        bouncer = new Bouncer(mockRecords);
     }
 
     @Test
     public void shouldLogMeIn() {
         addUser(USERNAME, PASSWORD);
-        assertNotNull(bouncer.enterClub(USERNAME, PASSWORD));
+        assertNotNull(bouncer.startSession(USERNAME, PASSWORD));
     }
 
     @Test
     public void shouldNotLogInInvalidPassword() {
         addUser(USERNAME, PASSWORD);
-        assertNull(bouncer.enterClub(USERNAME, PASSWORD + "4"));
+        assertNull(bouncer.startSession(USERNAME, PASSWORD + "4"));
     }
 
     @Test
     public void shouldNotLogInInvalidUser() {
         addUser(USERNAME, PASSWORD);
-        assertNull(bouncer.enterClub(USERNAME + "hello", PASSWORD));
+        assertNull(bouncer.startSession(USERNAME + "hello", PASSWORD));
+    }
+
+    @Test
+    public void oneTimeLogInShouldWorkOnlyOneTime() {
+        addUser(USERNAME, PASSWORD);
+        String oneTimeKey = bouncer.oneTimeKey(USERNAME, PASSWORD);
+        assertTrue(bouncer.validKey(oneTimeKey));
+        assertFalse(bouncer.validKey(oneTimeKey));
+    }
+
+    @Test
+    public void sessionKeyShouldWorkManyTime() {
+        addUser(USERNAME, PASSWORD);
+        String sessionKey = bouncer.startSession(USERNAME, PASSWORD);
+        assertTrue(bouncer.validKey(sessionKey));
+        assertTrue(bouncer.validKey(sessionKey));
     }
 }

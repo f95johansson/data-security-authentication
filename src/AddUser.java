@@ -15,7 +15,7 @@ public class AddUser {
                 System.out.print("Username: ");
                 String username = reader.readLine();
 
-                System.out.print("Password: ");
+                System.out.print("Password (clear text input): ");
                 String password = reader.readLine();
 
                 boolean succeeded = userRegistration.addUser(username, password);

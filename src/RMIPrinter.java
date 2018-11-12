@@ -21,5 +21,8 @@ interface RMIPrinter extends Remote {
     void setConfig(String parameter, String value, String sessionKey) throws RemoteException;   // sets the parameter to value
 
     //returns sessionkey
-    String logIn(String username, String password) throws RemoteException;
+    String logInSession(String username, String password) throws RemoteException;
+
+    //returns a key valid for only one execution
+    String logInOneTimeUse(String username, String password) throws RemoteException;
 }

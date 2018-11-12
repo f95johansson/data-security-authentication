@@ -15,12 +15,14 @@ public class Client {
         userRegistration.addUser(DEFAULT_USERNAME, DEFAULT_PASSWORD);
     }
 
+    public static RMIPrinter startClient() throws RemoteException, NotBoundException, MalformedURLException {
+        return (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
+    }
+
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
         clearPasswords();
-
-        RMIPrinter printer = (RMIPrinter) Naming.lookup("rmi://localhost:8099/printer");
-
-        String sessionKey = printer.logIn(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+        RMIPrinter printer = startClient();
+        String sessionKey = printer.logInSession(DEFAULT_USERNAME, DEFAULT_PASSWORD);
 
         printer.print("test.docx", "MyAwesomePrinter", sessionKey);
 
