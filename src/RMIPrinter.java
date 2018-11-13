@@ -2,7 +2,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 interface RMIPrinter extends Remote {
-    void print(String filename, String printer, String sessionKey) throws RemoteException;
+    int print(String filename, String printer, String sessionKey) throws RemoteException;
 
     String queue(String sessionKey) throws RemoteException;
 
@@ -21,5 +21,5 @@ interface RMIPrinter extends Remote {
     void setConfig(String parameter, String value, String sessionKey) throws RemoteException;   // sets the parameter to value
 
     //returns sessionkey
-    String logInSession(String username, String password) throws RemoteException;
+    String logIn(String username, String password) throws RemoteException;
 }

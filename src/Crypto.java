@@ -13,13 +13,13 @@ import java.security.spec.InvalidKeySpecException;
 
 public class Crypto {
     private static final int ITERATIONS = 1000;
-    private static final String SECRET = "sweden <3 france";
+    private static final String SECRET_SALT = "sweden <3 france";
 
     private Crypto() {}
 
     public static String toHash(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
-        PBEKeySpec spec = new PBEKeySpec(chars, fromHex(salt + SECRET), ITERATIONS, 64 * 8);
+        PBEKeySpec spec = new PBEKeySpec(chars, fromHex(salt + SECRET_SALT), ITERATIONS, 64 * 8);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] hash = skf.generateSecret(spec).getEncoded();
         return toHex(hash);

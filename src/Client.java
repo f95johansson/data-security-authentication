@@ -26,12 +26,16 @@ public class Client {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
         clearPasswords();
         RMIPrinter printer = startClient();
-        String sessionKey = printer.logInSession(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+        String sessionKey = printer.logIn(DEFAULT_USERNAME, DEFAULT_PASSWORD);
 
-        printer.print("test.docx", "MyAwesomePrinter", sessionKey);
-
-        printer.setConfig("Yo", "It works", sessionKey);
-        String value = printer.readConfig("Yo", sessionKey);
-        System.out.println(value);
+        printer.setConfig("magenta", "232", sessionKey);
+        printer.readConfig("magenta", sessionKey);
+        printer.status(sessionKey);
+        printer.stop(sessionKey);
+        printer.start(sessionKey);
+        printer.print("unimportant", "dtu-808-printer", sessionKey);
+        int job = printer.print("DTU.txt", "dtu-808-printer", sessionKey);
+        printer.topQueue(job, sessionKey);
+        printer.queue(sessionKey);
     }
 } 

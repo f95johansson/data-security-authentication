@@ -2,10 +2,10 @@ import java.time.LocalDateTime;
 
 public class UserToken {
     public final String username;
-    public final LocalDateTime expireTime;
+    public final LocalDateTime expirationTime;
 
-    public UserToken(String username, LocalDateTime expireTime) {
+    public UserToken(String username, LocalDateTime expirationTime) {
         this.username = username;
-        this.expireTime = expireTime;
+        this.expirationTime = expirationTime;
     }
 }

@@ -6,13 +6,15 @@ import java.util.*;
 public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     private Map<String, String> settings = new HashMap<>();
-    private List<Job> jobs = new LinkedList<>();
+
+    //map of printer -> job-queue
+    private List<Job> jobs = new ArrayList<>();
     private Status currentStatus = Status.On;
 
     private Bouncer bouncer = new Bouncer(new Users());
 
     private int uniqueIDGenerator = 0;
-    private final RemoteException NOT_LOGGED_IN = new RemoteException("You are not a valid user, please log in");
+    private final RemoteException NOT_LOGGED_IN_EXCEPTION = new RemoteException("You are not a valid user, please log in");
 
     public PrinterService() throws RemoteException {
         super();
@@ -26,29 +28,32 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         System.out.println("[" + username + ", " + method + "]: " + description);
     }
 
-    public String getUsername(String key) throws RemoteException {
+    private String getUsernameOrThrowRemoteException(String key) throws RemoteException {
         String username = bouncer.validSessionKey(key);
         
         if (username == null)
-            throw NOT_LOGGED_IN;
+            throw NOT_LOGGED_IN_EXCEPTION;
 
         return username;
     }
 
-    public void print(String filename, String printer, String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+    @Override
+    public int print(String filename, String printer, String sessionKey) throws RemoteException {
+        String username = getUsernameOrThrowRemoteException(sessionKey);
 
         log(username, "PRINT", "(" + filename + ", " + printer + ")");
-        pushPrintJob(filename, printer);
+        return pushPrintJob(filename, printer);
     }
 
-    private void pushPrintJob(String filename, String printer) {
-        jobs.add(jobs.size(), new Job(uniqueIDGenerator++, filename, printer));
+    private int pushPrintJob(String filename, String printer) {
+        Job job = new Job(uniqueIDGenerator++, filename, printer);
+        jobs.add(jobs.size(), job);
+        return job.jobNumber;
     }
 
+    @Override
     public String queue(String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
-        
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         log(username, "QUEUE");
 
         return jobs.stream()
@@ -57,8 +62,9 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
                 .orElse("[No jobs]");
     }
 
+    @Override
     public void topQueue(int job, String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "TOP QUEUE", String.valueOf(job));
 
@@ -75,22 +81,25 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         jobs.add(0, toMove);
     }
 
+    @Override
     public void start(String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "START");
         currentStatus = Status.On;
     }
 
+    @Override
     public void stop(String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "STOP");
         currentStatus = Status.Off;
     }
 
+    @Override
     public void restart(String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "RESTART");
         stop(sessionKey);
@@ -98,29 +107,32 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         start(sessionKey);
     }
 
+    @Override
     public String status(String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "STATUS");
         return currentStatus.name();
     }
 
+    @Override
     public String readConfig(String parameter, String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "READ CONFIG", parameter);
         return settings.getOrDefault(parameter, null);
     }
 
+    @Override
     public void setConfig(String parameter, String value, String sessionKey) throws RemoteException {
-        String username = getUsername(sessionKey);
+        String username = getUsernameOrThrowRemoteException(sessionKey);
         
         log(username, "SET CONFIG", "(" + parameter + ", " + value + ")");
         settings.put(parameter, value);
     }
 
     @Override
-    public String logInSession(String username, String password) {
+    public String logIn(String username, String password) {
         return bouncer.startSession(username, password);
     }
 }

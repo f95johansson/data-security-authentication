@@ -27,7 +27,7 @@ public class Bouncer {
         UserToken sessionUserToken = sessionKeys.getOrDefault(sessionKey, null);
         if (sessionUserToken == null) {
             return null;
-        } else if (sessionUserToken.expireTime.isBefore(LocalDateTime.now())) {
+        } else if (sessionUserToken.expirationTime.isBefore(LocalDateTime.now())) {
             sessionKeys.remove(sessionKey);
             return null;
         } else {

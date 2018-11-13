@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -27,7 +26,7 @@ public class ClientTest {
 
         try {
             rmiPrinter = Client.startClient(8081);
-            sessionKey = rmiPrinter.logInSession("hej", "password");
+            sessionKey = rmiPrinter.logIn("hej", "password");
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
             e.printStackTrace();
         }

@@ -23,7 +23,7 @@ public class SecurityTest {
         final int port = 8181;
         Backend.startServer(port);
         printer = Client.startClient(port);
-        printer.logInSession(name, psw);
+        printer.logIn(name, psw);
     }
 
     @Test(expected = RemoteException.class)

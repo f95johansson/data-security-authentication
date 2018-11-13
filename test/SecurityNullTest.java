@@ -24,7 +24,7 @@ public class SecurityNullTest {
         final int port = 8080;
         Backend.startServer(port);
         printer = Client.startClient(port);
-        printer.logInSession(name, psw);
+        printer.logIn(name, psw);
     }
 
     @Test(expected = RemoteException.class)
