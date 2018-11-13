@@ -1,9 +1,3 @@
-/*
- * File: BouncerTest.java
- * Author: Fredrik Johnson
- * Date: 2018-11-07
- */
-
 import org.junit.Before;
 import org.junit.Test;
 
