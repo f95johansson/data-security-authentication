@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class BouncerTest {
+public class GateKeeperTest {
 
-    private Bouncer bouncer;
+    private GateKeeper gateKeeper;
     private MockUsers mockUsers;
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "psw123";
@@ -24,32 +24,32 @@ public class BouncerTest {
     @Before
     public void before() {
         mockUsers = new MockUsers();
-        bouncer = new Bouncer(mockUsers);
+        gateKeeper = new GateKeeper(mockUsers);
     }
 
     @Test
     public void shoudLogIn() {
         addUser(USERNAME, PASSWORD);
-        assertNotNull(bouncer.startSession(USERNAME, PASSWORD));
+        assertNotNull(gateKeeper.startSession(USERNAME, PASSWORD));
     }
 
     @Test
     public void shouldNotLogInInvalidPassword() {
         addUser(USERNAME, PASSWORD);
-        assertNull(bouncer.startSession(USERNAME, PASSWORD + "4"));
+        assertNull(gateKeeper.startSession(USERNAME, PASSWORD + "4"));
     }
 
     @Test
     public void shouldNotLogInInvalidUser() {
         addUser(USERNAME, PASSWORD);
-        assertNull(bouncer.startSession(USERNAME + "hello", PASSWORD));
+        assertNull(gateKeeper.startSession(USERNAME + "hello", PASSWORD));
     }
 
     @Test
     public void sessionKeyShouldWorkManyTime() {
         addUser(USERNAME, PASSWORD);
-        String sessionKey = bouncer.startSession(USERNAME, PASSWORD);
-        assertNotNull(bouncer.validSessionKey(sessionKey));
-        assertNotNull(bouncer.validSessionKey(sessionKey));
+        String sessionKey = gateKeeper.startSession(USERNAME, PASSWORD);
+        assertNotNull(gateKeeper.validSessionKey(sessionKey));
+        assertNotNull(gateKeeper.validSessionKey(sessionKey));
     }
 }

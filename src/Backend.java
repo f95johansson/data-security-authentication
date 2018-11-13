@@ -4,10 +4,18 @@ import java.rmi.registry.Registry;
 
 public class Backend {
 
-    public static void startServer() {
+    /**
+     * Default configuration
+     */
+    private static void startServer() {
         startServer(8099);
     }
 
+    /**
+     * Starts a printer server that can be accessed on the specified port
+     * via remote method invocation
+     * @param port - The desired port
+     */
     public static void startServer(int port) {
         try {
             Registry registry = LocateRegistry.createRegistry(port);
