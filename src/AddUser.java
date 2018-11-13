@@ -2,6 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Script to help add a user to the current systems set of passwords
+ */
 public class AddUser {
 
     public static void main(String[] args) {

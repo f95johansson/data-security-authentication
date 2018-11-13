@@ -11,7 +11,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     private List<Job> jobs = new ArrayList<>();
     private Status currentStatus = Status.On;
 
-    private Bouncer bouncer = new Bouncer(new Users());
+    private GateKeeper gateKeeper = new GateKeeper(new Users());
 
     private int uniqueIDGenerator = 0;
     private final RemoteException NOT_LOGGED_IN_EXCEPTION = new RemoteException("You are not a valid user, please log in");
@@ -29,7 +29,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     private String getUsernameOrThrowRemoteException(String key) throws RemoteException {
-        String username = bouncer.validSessionKey(key);
+        String username = gateKeeper.validSessionKey(key);
         
         if (username == null)
             throw NOT_LOGGED_IN_EXCEPTION;
@@ -133,6 +133,6 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     @Override
     public String logIn(String username, String password) {
-        return bouncer.startSession(username, password);
+        return gateKeeper.startSession(username, password);
     }
 }

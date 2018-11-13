@@ -11,16 +11,23 @@ import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class Bouncer {
+/**
+ *
+ */
+public class GateKeeper {
     private final Users users;
     private final HashMap<String, UserToken> sessionKeys;
 
-    public Bouncer(Users user) {
+    public GateKeeper(Users user) {
         this.users = user;
         sessionKeys = new HashMap<>();
     }
 
-    //returns null if not valid otherwise returns name
+    /**
+     * Gets the name of the user that was provided that session key
+     * @param sessionKey - The session key in question
+     * @return null if not valid otherwise returns name
+     */
     public String validSessionKey(String sessionKey) {
         if (sessionKey == null) return null;
 
@@ -35,6 +42,12 @@ public class Bouncer {
         }
     }
 
+    /**
+     * Attempts to start a session
+     * @param username - The name of the user
+     * @param password - The password (unhashed)
+     * @return null if the attempt was not unsuccessfull, a session key otherwise
+     */
     public String startSession(String username, String password) {
         if (!validLogin(username, password)) return null;
 
@@ -49,6 +62,10 @@ public class Bouncer {
         return sessionKey;
     }
 
+    /**
+     * Creates a nonce that can be used as a session key
+     * @return A random string for use as a session key
+     */
     private static String generateSessionKey() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] key = new byte[32];
@@ -56,6 +73,12 @@ public class Bouncer {
         return Crypto.toHex(key);
     }
 
+    /**
+     * Checks whether the username exists and if the password provided is the correct password for the user
+     * @param username - The name of the user
+     * @param password - The password (unhashed)
+     * @return True if the client got successfully authenticated, false otherwise
+     */
     private boolean validLogin(String username, String password) {
         try {
             User user = users.getUser(User.formatUserName(username));
