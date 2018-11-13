@@ -1,6 +1,10 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+
+/**
+ * An RMI Interface for printer services
+ */
 interface RMIPrinter extends Remote {
     int print(String filename, String printer, String sessionKey) throws RemoteException;
 

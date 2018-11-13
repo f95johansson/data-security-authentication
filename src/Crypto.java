@@ -1,9 +1,3 @@
-/*
- * File: TheHasher.java
- * Author: Fredrik Johansson
- * Date: 2018-11-07
- */
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.math.BigInteger;

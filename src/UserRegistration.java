@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * Provides registering a new user functionality
+ */
 public class UserRegistration {
     private Users keeper;
 
@@ -9,6 +12,10 @@ public class UserRegistration {
         this.keeper = keeper;
     }
 
+    /**
+     * Register a new user
+     * @return True if successfull, false if failed or user already exists
+     */
     public boolean addUser(String username, String password) {
         try {
             if (keeper.userWithNameExists(username)) return false;
@@ -37,6 +44,9 @@ public class UserRegistration {
         return true;
     }
 
+    /**
+     * Clear all the user from the system
+     */
     public void burnThePlace() {
         try {
             keeper.clearFile();

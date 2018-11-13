@@ -1,9 +1,7 @@
-/*
- * File: User.java
- * Author: Fredrik Johansson
- * Date: 2018-11-07
- */
 
+/**
+ * Holds user information
+ */
 public class User {
 
     public final String username;
@@ -20,6 +18,9 @@ public class User {
         return String.format("%s,%s,%s", username, salt, hash);
     }
 
+    /**
+     * @return A valid username (no ",")
+     */
     public static String formatUserName(String username) {
         return username.replace(",", "");
     }

@@ -1,9 +1,3 @@
-/*
- * File: TheKeeperOfRecords.java
- * Author: Fredrik Johansson
- * Date: 2018-11-07
- */
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,10 +7,17 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+
+/**
+ * Reads and updates all the users and the passwords to a file
+ */
 public class Users {
 
     private final String PASSWORD_PATH =  "Passwords.txt";
 
+    /**
+     * @return The User with the provided username, or if username does not exists, then null
+     */
     public User getUser(String username) throws IOException {
         return getAllUsers()
                 .filter(user -> user.username.equals(username))
@@ -24,6 +25,10 @@ public class Users {
                 .orElse(null);
     }
 
+    /**
+     * Update the salt and password for the specified user
+     * @throws IOException could not write to password file
+     */
     public void updatePassword(String username, String salt, String newHashPassword) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
             getAllUsers()
@@ -62,17 +67,27 @@ public class Users {
                 .filter(Objects::nonNull);
     }
 
-
+    /**
+     * Add user to password file
+     * @throws IOException could not write
+     */
     public void addUser(User user) throws IOException {
         String lineToAppend = user.toString() + "\n";
         Files.write(Paths.get(PASSWORD_PATH), lineToAppend.getBytes(), StandardOpenOption.APPEND);
     }
 
+    /**
+     * Test to see if user with username exists
+     * @throws IOException could not read password file
+     */
     public boolean userWithNameExists(String username) throws IOException {
         return getAllUsers()
                 .anyMatch(user -> user.username.equals(username));
     }
 
+    /**
+     * Clear the password file
+     */
     public void clearFile() throws IOException {
         Files.write(Paths.get(PASSWORD_PATH), "".getBytes());
     }

@@ -1,9 +1,3 @@
-/*
- * File: TheBouncer.java
- * Author: Fredrik Johansson
- * Date: 2018-11-07
- */
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -13,7 +7,7 @@ import java.util.HashMap;
 
 public class Bouncer {
     private final Users users;
-    private final HashMap<String, UserToken> sessionKeys;
+    private final HashMap<String, SessionInfo> sessionKeys;
 
     public Bouncer(Users user) {
         this.users = user;
@@ -24,14 +18,14 @@ public class Bouncer {
     public String validSessionKey(String sessionKey) {
         if (sessionKey == null) return null;
 
-        UserToken sessionUserToken = sessionKeys.getOrDefault(sessionKey, null);
-        if (sessionUserToken == null) {
+        SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
+        if (sessionInfo == null) {
             return null;
-        } else if (sessionUserToken.expirationTime.isBefore(LocalDateTime.now())) {
+        } else if (sessionInfo.expirationTime.isBefore(LocalDateTime.now())) {
             sessionKeys.remove(sessionKey);
             return null;
         } else {
-            return sessionUserToken.username;
+            return sessionInfo.username;
         }
     }
 
@@ -45,7 +39,7 @@ public class Bouncer {
             e.printStackTrace();
             return null;
         }
-        sessionKeys.put(sessionKey, new UserToken(username, LocalDateTime.now().plusHours(2)));
+        sessionKeys.put(sessionKey, new SessionInfo(username, LocalDateTime.now().plusHours(2)));
         return sessionKey;
     }
 
