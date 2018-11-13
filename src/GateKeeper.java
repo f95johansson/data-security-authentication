@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 /**
- *
+ * Responsible for the authentication of clients, keeps track of session keys and handles log in attempts
  */
 public class GateKeeper {
     private final Users users;
