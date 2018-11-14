@@ -1,6 +1,13 @@
+package BackendStuff;
+
+import Interface.RMIPrinter;
+import Roles.Function;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+
+import static Roles.Function.*;
 
 
 public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
@@ -20,29 +27,21 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         super();
     }
 
-    private void log(String username, String method) {
-        System.out.println("[" + username + ", " + method + "]");
+    private void log(User user, String method) {
+        System.out.println("[" + user.name + ", " + method + "]");
     }
 
-    private void log(String username, String method, String description) {
-        System.out.println("[" + username + ", " + method + "]: " + description);
+    private void log(User user, String method, String description) {
+        System.out.println("[" + user.name + ", " + method + "]: " + description);
     }
 
-    private String getUsernameOrThrowRemoteException(String key) throws RemoteException {
-        String username = gateKeeper.validSessionKey(key);
+    private User getUsernameOrThrowRemoteException(String sessionKey, Function function) throws RemoteException {
+        User user = gateKeeper.validSessionKey(sessionKey, function);
         
-        if (username == null)
+        if (user == null)
             throw NOT_LOGGED_IN_EXCEPTION;
 
-        return username;
-    }
-
-    @Override
-    public int print(String filename, String printer, String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
-
-        log(username, "PRINT", "(" + filename + ", " + printer + ")");
-        return pushPrintJob(filename, printer);
+        return user;
     }
 
     private int pushPrintJob(String filename, String printer) {
@@ -52,9 +51,17 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     }
 
     @Override
+    public int print(String filename, String printer, String sessionKey) throws RemoteException {
+        User user = getUsernameOrThrowRemoteException(sessionKey, PRINT);
+
+        log(user, "PRINT", "(" + filename + ", " + printer + ")");
+        return pushPrintJob(filename, printer);
+    }
+
+    @Override
     public String queue(String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
-        log(username, "QUEUE");
+        User user = getUsernameOrThrowRemoteException(sessionKey, QUEUE);
+        log(user, "QUEUE");
 
         return jobs.stream()
                 .map(job -> "<" + job.jobNumber + "> <" + job.fileName + ">")
@@ -64,9 +71,9 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     @Override
     public void topQueue(int job, String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, TOP_QUEUE);
         
-        log(username, "TOP QUEUE", String.valueOf(job));
+        log(user, "TOP QUEUE", String.valueOf(job));
 
         Job toMove = jobs.stream()
                 .filter(j -> j.jobNumber == job)
@@ -83,25 +90,25 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     @Override
     public void start(String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, START);
         
-        log(username, "START");
+        log(user, "START");
         currentStatus = Status.On;
     }
 
     @Override
     public void stop(String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, STOP);
         
-        log(username, "STOP");
+        log(user, "STOP");
         currentStatus = Status.Off;
     }
 
     @Override
     public void restart(String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, RESTART);
         
-        log(username, "RESTART");
+        log(user, "RESTART");
         stop(sessionKey);
         jobs.clear();
         start(sessionKey);
@@ -109,25 +116,25 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     @Override
     public String status(String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, STATUS);
         
-        log(username, "STATUS");
+        log(user, "STATUS");
         return currentStatus.name();
     }
 
     @Override
     public String readConfig(String parameter, String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, READ_CONFIG);
         
-        log(username, "READ CONFIG", parameter);
+        log(user, "READ CONFIG", parameter);
         return settings.getOrDefault(parameter, null);
     }
 
     @Override
     public void setConfig(String parameter, String value, String sessionKey) throws RemoteException {
-        String username = getUsernameOrThrowRemoteException(sessionKey);
+        User user = getUsernameOrThrowRemoteException(sessionKey, SET_CONFIG);
         
-        log(username, "SET CONFIG", "(" + parameter + ", " + value + ")");
+        log(user, "SET CONFIG", "(" + parameter + ", " + value + ")");
         settings.put(parameter, value);
     }
 

@@ -1,3 +1,7 @@
+package BackendStuff;
+
+import Roles.Role;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +25,9 @@ public class AddUser {
                 System.out.print("Password (clear text input): ");
                 String password = reader.readLine();
 
-                boolean succeeded = userRegistration.addUser(username, password);
+                Role role = getRoleFromInput(reader);
+
+                boolean succeeded = userRegistration.addUser(username, password, role);
 
                 if (!succeeded) {
                     System.out.println("That name is taken");
@@ -32,5 +38,30 @@ public class AddUser {
                 encounteredError = true;
             }
         } while (encounteredError);
+    }
+
+    private static Role getRoleFromInput(BufferedReader reader) throws IOException {
+        Role[] roles = Role.values();
+        for (int i = 0; i < roles.length; i++) {
+            System.out.println(i + ". " + roles[i].name());
+        }
+
+        System.out.println("Which role, use the number keys for selection");
+
+        Role role = null;
+
+        do {
+            try {
+                int roleNumber = Integer.parseInt(reader.readLine().trim());
+                role = roles[roleNumber];
+
+                if (role == null) {
+                    System.out.println("That role does not exist, sorry");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please choose a number between 0 and " + (roles.length-1));
+            }
+        } while (role == null);
+        return role;
     }
 }

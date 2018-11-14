@@ -1,4 +1,10 @@
 
+import BackendStuff.Backend;
+import BackendStuff.UserRegistration;
+import BackendStuff.Users;
+import ClientStuff.Client;
+import Interface.RMIPrinter;
+import Roles.Role;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,7 +23,7 @@ public class SecurityTest {
         UserRegistration userRegistration = new UserRegistration(new Users());
         String name = "validUser";
         String psw = "validPassw0rd";
-        userRegistration.addUser(name, psw);
+        userRegistration.addUser(name, psw, Role.ADMIN);
 
         //adds one real key to the system
         final int port = 8181;

@@ -1,3 +1,7 @@
+package ClientStuff;
+
+import Interface.RMIPrinter;
+
 import java.rmi.Naming;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
@@ -26,7 +30,7 @@ public class Client {
 
     /**
      * A test main which connects to a printer (localhost:8099) with
-     * a test username and password, and performs a print action.
+     * a test name and password, and performs a print action.
      * Will only work if the specified user and password exists on server
      */
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {

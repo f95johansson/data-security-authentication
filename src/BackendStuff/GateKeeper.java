@@ -1,3 +1,7 @@
+package BackendStuff;
+
+import Roles.Function;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -19,10 +23,12 @@ public class GateKeeper {
 
     /**
      * Gets the name of the user that was provided that session key
+     *
      * @param sessionKey - The session key in question
-     * @return null if not valid otherwise returns name
+     * @param nameOfFunction, the function that calls this function as an enum
+     * @return null if it is not valid, the user otherwise
      */
-    public String validSessionKey(String sessionKey) {
+    public User validSessionKey(String sessionKey, Function nameOfFunction) {
         if (sessionKey == null) return null;
 
         SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
@@ -32,18 +38,20 @@ public class GateKeeper {
             sessionKeys.remove(sessionKey);
             return null;
         } else {
-            return sessionInfo.username;
+            return (sessionInfo.user.role.isAllowed(nameOfFunction)) ? sessionInfo.user : null;
         }
     }
 
     /**
      * Attempts to start a session
+     *
      * @param username - The name of the user
      * @param password - The password (unhashed)
      * @return null if the attempt was not unsuccessfull, a session key otherwise
      */
     public String startSession(String username, String password) {
-        if (!validLogin(username, password)) return null;
+        User user = validLogin(username, password);
+        if (user == null) return null;
 
         String sessionKey;
         try {
@@ -52,12 +60,13 @@ public class GateKeeper {
             e.printStackTrace();
             return null;
         }
-        sessionKeys.put(sessionKey, new SessionInfo(username, LocalDateTime.now().plusHours(2)));
+        sessionKeys.put(sessionKey, new SessionInfo(user, LocalDateTime.now().plusHours(2)));
         return sessionKey;
     }
 
     /**
      * Creates a nonce that can be used as a session key
+     *
      * @return A random string for use as a session key
      */
     private static String generateSessionKey() throws NoSuchAlgorithmException {
@@ -68,18 +77,27 @@ public class GateKeeper {
     }
 
     /**
-     * Checks whether the username exists and if the password provided is the correct password for the user
+     * Checks whether the name exists and if the password provided is the correct password for the user
+     *
      * @param username - The name of the user
      * @param password - The password (unhashed)
-     * @return True if the client got successfully authenticated, false otherwise
+     * @return The user if the client got successfully authenticated, null otherwise
      */
-    private boolean validLogin(String username, String password) {
+    private User validLogin(String username, String password) {
         try {
             User user = users.getUser(User.formatUserName(username));
-            return user != null && user.hash.equals(Crypto.toHash(password, user.salt));
+
+            if (user == null) return null;
+
+            if (user.hashedPassword.equals(Crypto.toHash(password, user.salt))) {
+                return user;
+            }
+
+            return null;
+
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.err.println(e.getMessage());
-            return false;
+            return null;
         }
     }
 }

@@ -1,3 +1,5 @@
+package BackendStuff;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.math.BigInteger;
@@ -14,7 +16,7 @@ public class Crypto {
     private Crypto() {}
 
     /**
-     * Hashes a password using a one-way hash function
+     * Hashes a password using a one-way hashedPassword function
      * @param password The password (unhashed)
      * @param salt The extra information making identical information unique hashes
      * @return The hashed version of the password

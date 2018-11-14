@@ -1,3 +1,7 @@
+package BackendStuff;
+
+import Roles.Role;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,11 +20,11 @@ public class Users {
     private final String PASSWORD_PATH =  "Passwords.txt";
 
     /**
-     * @return The User with the provided username, or if username does not exists, then null
+     * @return The BackendStuff.User with the provided name, or if name does not exists, then null
      */
     public User getUser(String username) throws IOException {
         return getAllUsers()
-                .filter(user -> user.username.equals(username))
+                .filter(user -> user.name.equals(username))
                 .findFirst()
                 .orElse(null);
     }
@@ -33,8 +37,8 @@ public class Users {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
             getAllUsers()
                     .map(user -> {
-                        if (user.username.equals(username)) {
-                            return new User(username, salt, newHashPassword);
+                        if (user.name.equals(username)) {
+                            return new User(username, user.role, salt, newHashPassword);
                         } else {
                             return user;
                         }
@@ -54,17 +58,27 @@ public class Users {
 
     private Stream<User> getAllUsers() throws IOException {
         return Arrays.stream(passwordLines())
-                .filter(line -> line.length() > 0 && !line.startsWith("#"))
+                .filter(String::isEmpty)
                 .map(line -> {
                     try {
                         String[] words = line.split(",");
-                        return new User(words[0], words[1], words[2]);
+                        Role role = Role.fromString(words[1]);
+                        if (role == null) throw new NullPointerException();
+                        return new User(words[0], role, words[2], words[3]);
+
                     } catch (IndexOutOfBoundsException e) {
-                        System.err.println("line: " + line + " was bad");
+                        System.err.println("line: " + line + " was incorrectly formatted");
+                        return null;
+                    } catch (NullPointerException e) {
+                        System.err.println("line: " + line + "had an incorrect role in it");
                         return null;
                     }
                 })
                 .filter(Objects::nonNull);
+    }
+
+    public void changeRole(String username, Role role, String salt, String hashedPassword) {
+
     }
 
     /**
@@ -77,12 +91,12 @@ public class Users {
     }
 
     /**
-     * Test to see if user with username exists
+     * Test to see if user with name exists
      * @throws IOException could not read password file
      */
     public boolean userWithNameExists(String username) throws IOException {
         return getAllUsers()
-                .anyMatch(user -> user.username.equals(username));
+                .anyMatch(user -> user.name.equals(username));
     }
 
     /**

@@ -1,3 +1,7 @@
+package BackendStuff;
+
+import Roles.Role;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -16,7 +20,7 @@ public class UserRegistration {
      * Register a new user
      * @return True if successfull, false if failed or user already exists
      */
-    public boolean addUser(String username, String password) {
+    public boolean addUser(String username, String password, Role role) {
         try {
             if (keeper.userWithNameExists(username)) return false;
         } catch (IOException e) {
@@ -35,7 +39,7 @@ public class UserRegistration {
         }
 
         try {
-            keeper.addUser(new User(username, salt, hashedPassword));
+            keeper.addUser(new User(username, role, salt, hashedPassword));
         } catch (IOException e) {
             e.printStackTrace();
             return false;

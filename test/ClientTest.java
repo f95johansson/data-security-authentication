@@ -1,3 +1,10 @@
+import BackendStuff.Backend;
+import BackendStuff.Status;
+import BackendStuff.UserRegistration;
+import BackendStuff.Users;
+import ClientStuff.Client;
+import Interface.RMIPrinter;
+import Roles.Role;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +28,7 @@ public class ClientTest {
         Users keeper = new Users();
         if (!keeper.userWithNameExists("hej")) {
             UserRegistration userRegistration = new UserRegistration(keeper);
-            userRegistration.addUser("hej", "password");
+            userRegistration.addUser("hej", "password", Role.ADMIN);
         }
 
         try {

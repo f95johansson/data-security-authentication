@@ -1,10 +1,16 @@
 
+import BackendStuff.Backend;
+import ClientStuff.Client;
+import Interface.RMIPrinter;
+import Roles.Role;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+
+import BackendStuff.*;
 
 /**
  * This suite tests that null can never be subsituted for the key for any value
@@ -15,10 +21,11 @@ public class SecurityNullTest {
 
     @BeforeClass
     public static void StartUp() throws RemoteException, NotBoundException, MalformedURLException {
+
         UserRegistration userRegistration = new UserRegistration(new MockUsers());
         String name = "validUser";
         String psw = "validPassw0rd";
-        userRegistration.addUser(name, psw);
+        userRegistration.addUser(name, psw, Role.ADMIN);
 
         //adds one real key to the system
         final int port = 8080;

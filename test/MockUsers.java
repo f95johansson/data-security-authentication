@@ -1,8 +1,11 @@
+import BackendStuff.User;
+import BackendStuff.Users;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class MockUsers extends Users {
-    Set<String> lines = new HashSet<>();
+    private Set<String> lines = new HashSet<>();
 
     @Override
     protected String[] passwordLines() {
@@ -11,5 +14,16 @@ public class MockUsers extends Users {
     @Override
     public void addUser(User user) {
         lines.add(user.toString());
+    }
+
+    @Override
+    public void updatePassword(String username, String salt, String newHashPassword)
+    {
+        return; //Not implemented
+    }
+
+    @Override
+    public void clearFile() {
+        lines.clear();
     }
 }

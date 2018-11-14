@@ -1,3 +1,7 @@
+import BackendStuff.GateKeeper;
+import BackendStuff.UserRegistration;
+import Roles.Function;
+import Roles.Role;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +16,7 @@ public class GateKeeperTest {
 
     private void addUser(String username, String password) {
         UserRegistration ids = new UserRegistration(mockUsers);
-        ids.addUser(username, password);
+        ids.addUser(username, password, Role.ADMIN);
     }
 
     @Before
@@ -43,7 +47,7 @@ public class GateKeeperTest {
     public void sessionKeyShouldWorkManyTime() {
         addUser(USERNAME, PASSWORD);
         String sessionKey = gateKeeper.startSession(USERNAME, PASSWORD);
-        assertNotNull(gateKeeper.validSessionKey(sessionKey));
-        assertNotNull(gateKeeper.validSessionKey(sessionKey));
+        assertNotNull(gateKeeper.validSessionKey(sessionKey, Function.PRINT));
+        assertNotNull(gateKeeper.validSessionKey(sessionKey, Function.PRINT));
     }
 }
