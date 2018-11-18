@@ -58,7 +58,7 @@ public class Users {
 
     private Stream<User> getAllUsers() throws IOException {
         return Arrays.stream(passwordLines())
-                .filter(String::isEmpty)
+                .filter(str -> !str.isEmpty())
                 .map(line -> {
                     try {
                         String[] words = line.split(",");

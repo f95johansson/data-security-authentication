@@ -14,14 +14,14 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     private Map<String, String> settings = new HashMap<>();
 
-    //map of printer -> job-queue
     private List<Job> jobs = new ArrayList<>();
     private Status currentStatus = Status.On;
 
     private GateKeeper gateKeeper = new GateKeeper(new Users());
 
     private int uniqueIDGenerator = 0;
-    private final RemoteException NOT_LOGGED_IN_EXCEPTION = new RemoteException("You are not a valid user, please log in");
+    private final RemoteException NOT_LOGGED_IN_EXCEPTION =
+            new RemoteException("You are not authorized for this function, maybe log in or request a role with more access");
 
     public PrinterService() throws RemoteException {
         super();
