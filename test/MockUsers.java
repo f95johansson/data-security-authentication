@@ -8,7 +8,7 @@ public class MockUsers extends Users {
     private Set<String> lines = new HashSet<>();
 
     @Override
-    protected String[] passwordLines() {
+    protected String[] allLinesInFile() {
         return lines.toArray(new String[0]);
     }
     @Override
@@ -17,7 +17,7 @@ public class MockUsers extends Users {
     }
 
     @Override
-    public void updatePassword(String username, String salt, String newHashPassword)
+    public void updatePassword(String username, String newSalt, String newHashPassword)
     {
         return; //Not implemented
     }

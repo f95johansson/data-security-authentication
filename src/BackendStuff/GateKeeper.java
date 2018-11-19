@@ -37,9 +37,24 @@ public class GateKeeper {
         } else if (sessionInfo.expirationTime.isBefore(LocalDateTime.now())) {
             sessionKeys.remove(sessionKey);
             return null;
+        } else if (!sessionInfo.user.role.isAllowed(nameOfFunction)){
+            //double check if they recently got promoted, TODO check that this does not jeopardize security, should not since the user has a session-key
+            try {
+                User user = users.getUser(sessionInfo.user.name);
+                if (user.role.isAllowed(nameOfFunction)) return user;
+                else return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         } else {
-            return (sessionInfo.user.role.isAllowed(nameOfFunction)) ? sessionInfo.user : null;
+            return sessionInfo.user;
         }
+    }
+
+    public User getUser(String sessionKey) {
+        SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
+        return sessionInfo == null ? null : sessionInfo.user;
     }
 
     /**

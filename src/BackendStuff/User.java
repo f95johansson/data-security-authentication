@@ -20,7 +20,7 @@ public class User {
     }
 
     public String toString() {
-        return String.format("%s,%s,%s,%s", name, role.name(), salt, hashedPassword);
+        return String.format("%s,%s,%s,%s\n", name, role.name(), salt, hashedPassword);
     }
 
     /**
@@ -28,5 +28,9 @@ public class User {
      */
     public static String formatUserName(String username) {
         return username.replace(",", "");
+    }
+
+    public User withRole(Role role) {
+        return new User(name, role, salt, hashedPassword);
     }
 }

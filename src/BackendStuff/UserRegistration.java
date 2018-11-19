@@ -58,4 +58,8 @@ public class UserRegistration {
             e.printStackTrace();
         }
     }
+
+    public static void main(String[] args) {
+        new UserRegistration(new Users()).addUser("admin", "admin", Role.ADMIN);
+    }
 }
