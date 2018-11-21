@@ -75,6 +75,9 @@ public class Users {
     }
 
     protected String[] passwordLines() throws IOException {
+        if (!Files.exists(Paths.get(PASSWORD_PATH))) {
+            Files.createFile(Paths.get(PASSWORD_PATH));
+        }
         return new String(Files.readAllBytes(Paths.get(PASSWORD_PATH))).split("\n");
     }
 
