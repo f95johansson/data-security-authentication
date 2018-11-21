@@ -21,6 +21,31 @@ public class PermissionsTest {
         printer.print("file", "printer", session);
     }
 
+    @Test
+    public void should_allow_alice_to_print_queue_topQueue_start_stop_restart_status_readConfig_setConfig() throws RemoteException {
+        String session = printer.logIn("Alice", "password");
+        int job = printer.print("file", "printer", session);
+        printer.queue(session);
+        printer.topQueue(job, session);
+        printer.start(session);
+        printer.stop(session);
+        printer.restart( session);
+        printer.status( session);
+        printer.readConfig("test", session);
+        printer.setConfig("test", "test", session);
+    }
+
+    @Test
+    public void should_allow_bob_to_start_stop_restart_status_readConfig_setConfig() throws RemoteException {
+        String session = printer.logIn("Alice", "password");
+        printer.start(session);
+        printer.stop(session);
+        printer.restart( session);
+        printer.status( session);
+        printer.readConfig("test", session);
+        printer.setConfig("test", "test", session);
+    }
+
     @Test(expected = RemoteException.class)
     public void should_not_allow_print_for_bob() throws RemoteException {
         String session = printer.logIn("Bob", "password");

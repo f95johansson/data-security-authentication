@@ -60,6 +60,18 @@ public class UserRegistration {
         }
     }
 
+    public String[] getUserPermissions(String username) {
+        try {
+            if (!keeper.userWithNameExists(username)) {
+                return new String[0];
+            }
+            return keeper.getPermissions(username).stream().map(permissions -> permissions.string).toArray(String[]::new);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new String[0];
+        }
+    }
+
     /**
      * Clear all the user from the system
      */

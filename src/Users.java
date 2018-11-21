@@ -6,6 +6,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -31,40 +32,45 @@ public class Users {
      * @throws IOException could not write to password file
      */
     public void updatePassword(String username, String salt, String newHashPassword) throws IOException {
+
+        String content = getAllUsers()
+                .map(user -> {
+                    if (user.username.equals(username)) {
+                        return new User(username, salt, newHashPassword, user.permissions);
+                    } else {
+                        return user;
+                    }
+                })
+                .map(User::toString)
+                .collect(Collectors.joining("\n"));
+
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
-            getAllUsers()
-                    .map(user -> {
-                        if (user.username.equals(username)) {
-                            return new User(username, salt, newHashPassword, user.permissions);
-                        } else {
-                            return user;
-                        }
-                    }).forEach(user -> {
-                        try {
-                            writer.write(user.toString());
-                        } catch (IOException e) {
-                            System.err.println("Could not write to password file");
-                        }
-                    });
+                writer.write(content);
         }
     }
 
     public void updatePermissions(String username, Set<Permissions> permissions) throws IOException {
+        String content = getAllUsers()
+                .map(user -> {
+                    if (user.username.equals(username)) {
+                        return new User(username, user.salt, user.hash, permissions);
+                    } else {
+                        return user;
+                    }
+                })
+                .map(User::toString)
+                .collect(Collectors.joining("\n"));
+
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
-            getAllUsers()
-                    .map(user -> {
-                        if (user.username.equals(username)) {
-                            return new User(username, user.salt, user.hash, permissions);
-                        } else {
-                            return user;
-                        }
-                    }).forEach(user -> {
-                        try {
-                            writer.write(user.toString());
-                        } catch (IOException e) {
-                            System.err.println("Could not write to password file");
-                        }
-                    });
+            writer.write(content);
+        }
+    }
+
+    public Set<Permissions> getPermissions(String username) throws IOException {
+        try {
+            return getUser(username).permissions;
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("No such username exists");
         }
     }
 
