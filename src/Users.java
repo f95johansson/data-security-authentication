@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 
@@ -34,7 +35,26 @@ public class Users {
             getAllUsers()
                     .map(user -> {
                         if (user.username.equals(username)) {
-                            return new User(username, salt, newHashPassword);
+                            return new User(username, salt, newHashPassword, user.permissions);
+                        } else {
+                            return user;
+                        }
+                    }).forEach(user -> {
+                        try {
+                            writer.write(user.toString());
+                        } catch (IOException e) {
+                            System.err.println("Could not write to password file");
+                        }
+                    });
+        }
+    }
+
+    public void updatePermissions(String username, Set<Permissions> permissions) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
+            getAllUsers()
+                    .map(user -> {
+                        if (user.username.equals(username)) {
+                            return new User(username, user.salt, user.hash, permissions);
                         } else {
                             return user;
                         }
@@ -57,8 +77,8 @@ public class Users {
                 .filter(line -> line.length() > 0 && !line.startsWith("#"))
                 .map(line -> {
                     try {
-                        String[] words = line.split(",");
-                        return new User(words[0], words[1], words[2]);
+                        String[] words = line.split(",", -1);
+                        return new User(words[0], words[1], words[2], words[3].split(";"));
                     } catch (IndexOutOfBoundsException e) {
                         System.err.println("line: " + line + " was bad");
                         return null;

@@ -33,7 +33,7 @@ public class ClientTest {
     }
 
     @Before
-    public void Reset() throws RemoteException {
+    public void reset() throws RemoteException {
         rmiPrinter.restart(sessionKey);
     }
 

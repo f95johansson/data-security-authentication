@@ -22,7 +22,7 @@ public class GateKeeper {
      * @param sessionKey - The session key in question
      * @return null if not valid otherwise returns name
      */
-    public String validSessionKey(String sessionKey) {
+    public User validSessionKey(String sessionKey) {
         if (sessionKey == null) return null;
 
         SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
@@ -32,7 +32,7 @@ public class GateKeeper {
             sessionKeys.remove(sessionKey);
             return null;
         } else {
-            return sessionInfo.username;
+            return sessionInfo.user;
         }
     }
 
@@ -43,7 +43,8 @@ public class GateKeeper {
      * @return null if the attempt was not unsuccessfull, a session key otherwise
      */
     public String startSession(String username, String password) {
-        if (!validLogin(username, password)) return null;
+        User user = validLogin(username, password);
+        if (user == null) return null; // invalid login
 
         String sessionKey;
         try {
@@ -52,7 +53,7 @@ public class GateKeeper {
             e.printStackTrace();
             return null;
         }
-        sessionKeys.put(sessionKey, new SessionInfo(username, LocalDateTime.now().plusHours(2)));
+        sessionKeys.put(sessionKey, new SessionInfo(user, LocalDateTime.now().plusHours(2)));
         return sessionKey;
     }
 
@@ -73,13 +74,17 @@ public class GateKeeper {
      * @param password - The password (unhashed)
      * @return True if the client got successfully authenticated, false otherwise
      */
-    private boolean validLogin(String username, String password) {
+    private User validLogin(String username, String password) {
         try {
             User user = users.getUser(User.formatUserName(username));
-            return user != null && user.hash.equals(Crypto.toHash(password, user.salt));
+            if (user != null && user.hash.equals(Crypto.toHash(password, user.salt))) {
+                return user;
+            } else {
+                return null;
+            }
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.err.println(e.getMessage());
-            return false;
+            return null;
         }
     }
 }

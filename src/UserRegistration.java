@@ -1,6 +1,9 @@
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * Provides registering a new user functionality
@@ -35,13 +38,26 @@ public class UserRegistration {
         }
 
         try {
-            keeper.addUser(new User(username, salt, hashedPassword));
+            keeper.addUser(new User(username, salt, hashedPassword, new HashSet<>()));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
 
         return true;
+    }
+
+    public boolean updateUserPermission(String username, String... permissions) {
+        try {
+            if (!keeper.userWithNameExists(username)) {
+                return false;
+            }
+            keeper.updatePermissions(username, Arrays.stream(permissions).map(Permissions::fromString).collect(Collectors.toSet()));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
