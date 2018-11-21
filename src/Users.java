@@ -86,7 +86,7 @@ public class Users {
                 .filter(line -> line.length() > 0 && !line.startsWith("#"))
                 .map(line -> {
                     try {
-                        String[] words = line.split(",", -1);
+                        String[] words = line.trim().split(",", -1);
                         return new User(words[0], words[1], words[2], words[3].split(";"));
                     } catch (IndexOutOfBoundsException e) {
                         System.err.println("line: " + line + " was bad");
