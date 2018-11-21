@@ -4,21 +4,21 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static Roles.Function.*;
+import static Roles.Method.*;
 
 public enum Role {
-    ADMIN(Function.values()),
+    ADMIN(Method.values()),
     MAINTAINER(START, STOP, RESTART, STATUS),
     POWER_USER(PRINT, QUEUE, RESTART, TOP_QUEUE),
     USER(PRINT, QUEUE);
 
-    private final Set<Function> allowed;
-    Role(Function... functions) {
-        allowed = Arrays.stream(functions).collect(Collectors.toSet());
+    private final Set<Method> allowed;
+    Role(Method... methods) {
+        allowed = Arrays.stream(methods).collect(Collectors.toSet());
     }
 
-    public boolean isAllowed(Function function) {
-        return allowed.contains(function);
+    public boolean isAllowed(Method method) {
+        return allowed.contains(method);
     }
 
     public static Role fromString(String roleName) {

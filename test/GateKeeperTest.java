@@ -1,6 +1,6 @@
 import BackendStuff.GateKeeper;
-import BackendStuff.UserRegistration;
-import Roles.Function;
+import BackendStuff.Mains.UserRegistration;
+import Roles.Method;
 import Roles.Role;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class GateKeeperTest {
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "psw123";
 
-    private void addUser(String username, String password) {
+    private void addAdmin(String username, String password) {
         UserRegistration ids = new UserRegistration(mockUsers);
         ids.addUser(username, password, Role.ADMIN);
     }
@@ -26,28 +26,28 @@ public class GateKeeperTest {
     }
 
     @Test
-    public void shoudLogIn() {
-        addUser(USERNAME, PASSWORD);
+    public void shouldLogIn() {
+        addAdmin(USERNAME, PASSWORD);
         assertNotNull(gateKeeper.startSession(USERNAME, PASSWORD));
     }
 
     @Test
     public void shouldNotLogInInvalidPassword() {
-        addUser(USERNAME, PASSWORD);
+        addAdmin(USERNAME, PASSWORD);
         assertNull(gateKeeper.startSession(USERNAME, PASSWORD + "4"));
     }
 
     @Test
     public void shouldNotLogInInvalidUser() {
-        addUser(USERNAME, PASSWORD);
+        addAdmin(USERNAME, PASSWORD);
         assertNull(gateKeeper.startSession(USERNAME + "hello", PASSWORD));
     }
 
     @Test
     public void sessionKeyShouldWorkManyTime() {
-        addUser(USERNAME, PASSWORD);
+        addAdmin(USERNAME, PASSWORD);
         String sessionKey = gateKeeper.startSession(USERNAME, PASSWORD);
-        assertNotNull(gateKeeper.validSessionKey(sessionKey, Function.PRINT));
-        assertNotNull(gateKeeper.validSessionKey(sessionKey, Function.PRINT));
+        assertNotNull(gateKeeper.validSessionKey(sessionKey, Method.PRINT));
+        assertNotNull(gateKeeper.validSessionKey(sessionKey, Method.PRINT));
     }
 }

@@ -2,27 +2,39 @@ package BackendStuff;
 
 import Roles.Role;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static Roles.Role.POWER_USER;
 
 
 /**
- * Reads and updates all the users and the passwords to a file
+ * Reads and updates the users and the passwords stored in a file
  */
 public class Users {
 
-    private final String PASSWORD_PATH = "User-records.txt";
+    private static final String DEFAULT_PASSWORD_PATH = "User-records.txt";
+    private final String password_path;
+
+    public Users() {
+        this(DEFAULT_PASSWORD_PATH);
+    }
+
+    public Users(String path) {
+        password_path = path;
+
+        if (!Files.exists(Paths.get(password_path))) {
+            try {
+                Files.createFile(Paths.get(password_path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * @return The BackendStuff.User with the provided name, or if name does not exists, then null
@@ -53,7 +65,7 @@ public class Users {
                 .map(User::toString)
                 .forEach(output::append);
 
-        Files.write(Paths.get(PASSWORD_PATH), output.toString().getBytes(), StandardOpenOption.WRITE);
+        Files.write(Paths.get(password_path), output.toString().getBytes(), StandardOpenOption.WRITE);
     }
 
     /**
@@ -74,7 +86,7 @@ public class Users {
     }
 
     protected String[] allLinesInFile() throws IOException {
-        return new String(Files.readAllBytes(Paths.get(PASSWORD_PATH))).split("\n");
+        return new String(Files.readAllBytes(Paths.get(password_path))).split("\n");
     }
 
     private Stream<User> getAllUsers() throws IOException {
@@ -105,7 +117,7 @@ public class Users {
      */
     public void addUser(User user) throws IOException {
         String lineToAppend = user.toString();
-        Files.write(Paths.get(PASSWORD_PATH), lineToAppend.getBytes(), StandardOpenOption.APPEND);
+        Files.write(Paths.get(password_path), lineToAppend.getBytes(), StandardOpenOption.APPEND);
     }
 
     /**
@@ -122,6 +134,6 @@ public class Users {
      * Clear the password file
      */
     public void clearFile() throws IOException {
-        Files.write(Paths.get(PASSWORD_PATH), "".getBytes());
+        Files.write(Paths.get(password_path), "".getBytes());
     }
 }

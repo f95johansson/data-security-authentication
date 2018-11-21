@@ -30,7 +30,7 @@ public class Crypto {
     }
 
     /**
-     * Function for generating a salt using secury random
+     * Method for generating a salt using secury random
      * @return The salt
      */
     public static String generateSalt() throws NoSuchAlgorithmException {

@@ -1,4 +1,6 @@
-package BackendStuff;
+package BackendStuff.Mains;
+
+import BackendStuff.Services.PrinterService;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

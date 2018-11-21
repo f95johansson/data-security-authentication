@@ -36,7 +36,7 @@ public class AdminClient {
      *
      * @return the connected client
      */
-    private static Admin startAdminClient(int port) throws RemoteException, NotBoundException, MalformedURLException {
+    public static Admin startAdminClient(int port) throws RemoteException, NotBoundException, MalformedURLException {
         return (Admin) Naming.lookup("rmi://localhost:" + port + "/admin");
     }
 

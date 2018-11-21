@@ -1,6 +1,6 @@
 package BackendStuff;
 
-import Roles.Function;
+import Roles.Method;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -25,10 +25,10 @@ public class GateKeeper {
      * Gets the name of the user that was provided that session key
      *
      * @param sessionKey - The session key in question
-     * @param nameOfFunction, the function that calls this function as an enum
+     * @param nameOfMethod, the function that calls this function as an enum
      * @return null if it is not valid, the user otherwise
      */
-    public User validSessionKey(String sessionKey, Function nameOfFunction) {
+    public User validSessionKey(String sessionKey, Method nameOfMethod) {
         if (sessionKey == null) return null;
 
         SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
@@ -37,16 +37,8 @@ public class GateKeeper {
         } else if (sessionInfo.expirationTime.isBefore(LocalDateTime.now())) {
             sessionKeys.remove(sessionKey);
             return null;
-        } else if (!sessionInfo.user.role.isAllowed(nameOfFunction)){
-            //double check if they recently got promoted, TODO check that this does not jeopardize security, should not since the user has a session-key
-            try {
-                User user = users.getUser(sessionInfo.user.name);
-                if (user.role.isAllowed(nameOfFunction)) return user;
-                else return null;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+        } else if (!sessionInfo.user.role.isAllowed(nameOfMethod)){
+            return null;
         } else {
             return sessionInfo.user;
         }

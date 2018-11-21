@@ -1,6 +1,6 @@
 import static Roles.Role.*;
 
-import BackendStuff.UserRegistration;
+import BackendStuff.Mains.UserRegistration;
 import org.junit.Before;
 
 public class RolesTest {

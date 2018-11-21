@@ -1,6 +1,6 @@
 package Roles;
 
-public enum Function {
+public enum Method {
     PRINT, QUEUE, TOP_QUEUE,
     START, STOP, RESTART, STATUS, READ_CONFIG, SET_CONFIG,
     ADD_USER, REMOVE_USER, CHANGE_USER_ROLE;

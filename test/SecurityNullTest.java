@@ -1,5 +1,6 @@
 
-import BackendStuff.Backend;
+import BackendStuff.Mains.Backend;
+import BackendStuff.Mains.UserRegistration;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
 import Roles.Role;
@@ -9,8 +10,6 @@ import org.junit.Test;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
-import BackendStuff.*;
 
 /**
  * This suite tests that null can never be subsituted for the key for any value

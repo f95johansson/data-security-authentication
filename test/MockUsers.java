@@ -13,7 +13,7 @@ public class MockUsers extends Users {
     }
     @Override
     public void addUser(User user) {
-        lines.add(user.toString());
+        lines.add(user.toString().trim());
     }
 
     @Override

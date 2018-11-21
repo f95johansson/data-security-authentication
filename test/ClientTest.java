@@ -1,6 +1,6 @@
-import BackendStuff.Backend;
+import BackendStuff.Mains.Backend;
 import BackendStuff.Status;
-import BackendStuff.UserRegistration;
+import BackendStuff.Mains.UserRegistration;
 import BackendStuff.Users;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
