@@ -2,6 +2,8 @@ package BackendStuff.Services;
 
 import BackendStuff.*;
 import BackendStuff.Functionality.AdminFunctions;
+import BackendStuff.SafeTypes.NonNull;
+import BackendStuff.SafeTypes.NonNullString;
 import Interface.Admin;
 import static Roles.Method.*;
 import Roles.Method;
@@ -32,7 +34,7 @@ public class AdminService extends UnicastRemoteObject implements Admin {
     @Override
     public void addUser(String username, String password, Role role, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, ADD_USER);
-        boolean succeeded = af.addUser(new StringOrException(username), new StringOrException(password), new NonNullOrException<>(role));
+        boolean succeeded = af.addUser(new NonNullString(username), new NonNullString(password), new NonNull<>(role));
 
         if (!succeeded)
             throw new RemoteException("Username is taken");
@@ -42,7 +44,7 @@ public class AdminService extends UnicastRemoteObject implements Admin {
     public void removeUser(String username, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, REMOVE_USER);
 
-        boolean succeeded = af.removeUser(new StringOrException(username));
+        boolean succeeded = af.removeUser(new NonNullString(username));
 
         if (!succeeded)
             throw new RemoteException("Could not remove the user for some reason, check backend-log");
@@ -52,7 +54,7 @@ public class AdminService extends UnicastRemoteObject implements Admin {
     public void changeUserRole(String username, Role newRole, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, CHANGE_USER_ROLE);
 
-        boolean succeeded = af.changeUserRole(new StringOrException(username), new NonNullOrException<>(newRole));
+        boolean succeeded = af.changeUserRole(new NonNullString(username), new NonNull<>(newRole));
 
         if (!succeeded)
             throw new RemoteException("Could not change the users role for some reason, check backend-log");

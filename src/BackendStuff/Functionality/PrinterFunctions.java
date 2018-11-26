@@ -2,7 +2,7 @@ package BackendStuff.Functionality;
 
 import BackendStuff.Job;
 import BackendStuff.Status;
-import BackendStuff.StringOrException;
+import BackendStuff.SafeTypes.NonNullString;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class PrinterFunctions {
 
     private int uniqueIDGenerator = 0;
 
-    public int print(StringOrException filename, StringOrException printer) {
+    public int print(NonNullString filename, NonNullString printer) {
         Job job = new Job(uniqueIDGenerator++, filename.value, printer.value);
         jobs.add(jobs.size(), job);
         return job.jobNumber;
@@ -64,11 +64,11 @@ public class PrinterFunctions {
         return currentStatus.name();
     }
 
-    public String readConfig(StringOrException parameter)  {
+    public String readConfig(NonNullString parameter)  {
         return settings.getOrDefault(parameter.value, null);
     }
 
-    public void setConfig(StringOrException parameter, StringOrException value)  {
+    public void setConfig(NonNullString parameter, NonNullString value)  {
         settings.put(parameter.value, value.value);
     }
 }

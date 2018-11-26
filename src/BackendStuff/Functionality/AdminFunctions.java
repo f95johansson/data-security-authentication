@@ -1,6 +1,8 @@
 package BackendStuff.Functionality;
 
 import BackendStuff.*;
+import BackendStuff.SafeTypes.NonNull;
+import BackendStuff.SafeTypes.NonNullString;
 import Roles.Role;
 
 import java.io.IOException;
@@ -13,12 +15,12 @@ public class AdminFunctions {
         this.users = users;
     }
 
-    public boolean addUser(StringOrException username, StringOrException password, NonNullOrException<Role> role) {
+    public boolean addUser(NonNullString username, NonNullString password, NonNull<Role> role) {
         UserRegistration usr = new UserRegistration(users);
         return usr.addUser(username.value, password.value, role.value);
     }
 
-    public boolean removeUser(StringOrException username) {
+    public boolean removeUser(NonNullString username) {
         try {
             users.removeUser(username.value);
             return true;
@@ -28,7 +30,7 @@ public class AdminFunctions {
         }
     }
 
-    public boolean changeUserRole(StringOrException username, NonNullOrException<Role> newRole) {
+    public boolean changeUserRole(NonNullString username, NonNull<Role> newRole) {
         try {
             users.updateUserRole(username.value, newRole.value);
             return true;

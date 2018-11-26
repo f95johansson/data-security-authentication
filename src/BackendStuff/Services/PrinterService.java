@@ -2,6 +2,7 @@ package BackendStuff.Services;
 
 import BackendStuff.*;
 import BackendStuff.Functionality.PrinterFunctions;
+import BackendStuff.SafeTypes.NonNullString;
 import Interface.RMIPrinter;
 import Roles.Method;
 
@@ -52,7 +53,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         User user = getUserOrThrowRemoteException(sessionKey, PRINT);
 
         log(user, PRINT, "(" + filename + ", " + printer + ")");
-        return pf.print(new StringOrException(filename), new StringOrException(printer));
+        return pf.print(new NonNullString(filename), new NonNullString(printer));
     }
 
     @Override
@@ -112,7 +113,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         User user = getUserOrThrowRemoteException(sessionKey, READ_CONFIG);
         log(user, READ_CONFIG, parameter);
 
-        return pf.readConfig(new StringOrException(parameter));
+        return pf.readConfig(new NonNullString(parameter));
     }
 
     @Override
@@ -120,7 +121,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         User user = getUserOrThrowRemoteException(sessionKey, SET_CONFIG);
         log(user, SET_CONFIG, "(" + parameter + ", " + value + ")");
 
-        pf.setConfig(new StringOrException(parameter), new StringOrException(value));
+        pf.setConfig(new NonNullString(parameter), new NonNullString(value));
     }
 
     @Override
