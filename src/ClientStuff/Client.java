@@ -85,31 +85,40 @@ public class Client {
                         "\tvoid restart(String sessionKey)\n" +
                         "\tString status(String sessionKey)\n" +
                         "\tString readConfig(String parameter)\n" +
-                        "\tvoid setConfig(String parameter, String value)");
+                        "\tvoid setConfig(String parameter, String value)\n" +
+                        "\tboolean changeMyPassword(String username, String oldPassword, String newPassword)");
 
                 String line = getLine("Write function: ").trim().toLowerCase();
 
                 if (line.equals("quit") || line.equals("exit")) {
                     exitCode = 0;
                 } else {
-                    final Pattern twoParams = Pattern.compile("([a-z0-9åäöÅÄÖ]+)\\(([a-z0-9åäöÅÄÖ]+),[ ]?([a-z0-9åäöÅÄÖ]+)\\)");
-                    final Pattern oneParam = Pattern.compile("([a-z0-9åäöÅÄÖ]+)\\(([a-z0-9åäöÅÄÖ]+)\\)");
-                    final Pattern zeroParam = Pattern.compile("([a-z0-9åäöÅÄÖ]+)\\(\\)");
 
-                    Matcher matches = twoParams.matcher(line);
+                    final String name = "([a-z0-9åäöÅÄÖ]+)";
+                    final Pattern threeParams = Pattern.compile(name + "\\(" + name + ",[ ]?" + name +  ",[ ]?" + name + "\\)");
+                    final Pattern twoParams = Pattern.compile(name + "\\(" + name + ",[ ]?" + name +  "\\)");
+                    final Pattern oneParam = Pattern.compile(name + "\\(" + name + "\\)");
+                    final Pattern zeroParam = Pattern.compile(name + "\\(\\)");
 
-                    if (matches.matches() && matches.groupCount() == 3) {
-                        run(matches.group(1), matches.group(2), matches.group(3));
+                    Matcher matches = threeParams.matcher(line);
+
+                    if (matches.matches() && matches.groupCount() == 4) {
+                        run(matches.group(1), matches.group(2), matches.group(3), matches.group(4));
                     } else {
-                        matches = oneParam.matcher(line);
-                        if (matches.matches() && matches.groupCount() == 2) {
-                            run(matches.group(1), matches.group(2));
+                        matches = twoParams.matcher(line);
+                        if (matches.matches() && matches.groupCount() == 3) {
+                            run(matches.group(1), matches.group(2), matches.group(3));
                         } else {
-                            matches = zeroParam.matcher(line);
-                            if (matches.matches() && matches.groupCount() == 1) {
-                                run(matches.group(1));
+                            matches = oneParam.matcher(line);
+                            if (matches.matches() && matches.groupCount() == 2) {
+                                run(matches.group(1), matches.group(2));
                             } else {
-                                run(line);
+                                matches = zeroParam.matcher(line);
+                                if (matches.matches() && matches.groupCount() == 1) {
+                                    run(matches.group(1));
+                                } else {
+                                    run(line);
+                                }
                             }
                         }
                     }
@@ -118,8 +127,6 @@ public class Client {
                         System.out.println(matches.group());
                     }
                 }
-
-
             } catch(RemoteException e){
                 throw e;
             } catch (IOException e) {
@@ -128,6 +135,15 @@ public class Client {
         }
 
         return exitCode;
+    }
+
+    private static void run(String name, String arg1, String arg2, String arg3) throws RemoteException {
+        if (name.toLowerCase().equals("changemypassword")) {
+            printer.changeMyPassword(arg1, arg2, arg3);
+            return;
+        }
+
+        System.out.println("There is no function " + name + " that takes three parameter '" + arg1 + "', '" + arg2 + "' and '" + arg2 + "'");
     }
 
     private static void run(String name, String arg1, String arg2) throws RemoteException {

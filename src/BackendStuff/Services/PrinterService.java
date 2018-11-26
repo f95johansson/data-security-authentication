@@ -5,22 +5,28 @@ import BackendStuff.Functionality.PrinterFunctions;
 import Interface.RMIPrinter;
 import Roles.Method;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import static Roles.Method.*;
 
 public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
-    private GateKeeper gateKeeper = new GateKeeper(new Users());
+    private GateKeeper gateKeeper;
+    private Users users;
 
     private final RemoteException NOT_LOGGED_IN_EXCEPTION =
             new RemoteException("You are not authorized for this function, maybe log in or request a role with more access");
 
     private PrinterFunctions pf = new PrinterFunctions();
 
-    public PrinterService() throws RemoteException {
+    public PrinterService(Users users) throws RemoteException {
         super();
+        this.users = users;
+        gateKeeper = new GateKeeper(users);
     }
 
     private void log(User user, Method method) {
@@ -122,5 +128,22 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         if (username == null || password == null) throw new RemoteException("Input cannot be null");
 
         return gateKeeper.startSession(username, password);
+    }
+
+    @Override
+    public boolean changeMyPassword(String username, String oldPassword, String newPassword) {
+        if (newPassword == null) return false;
+
+        if (gateKeeper.validLogin(username, oldPassword) != null) {
+            try {
+                String salt = Crypto.generateSalt();
+                users.updatePassword(username, salt, Crypto.toHash(newPassword, salt));
+                return true;
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
     }
 }

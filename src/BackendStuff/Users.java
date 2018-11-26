@@ -4,6 +4,7 @@ import Roles.Role;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
@@ -11,25 +12,28 @@ import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-
 /**
  * Reads and updates the users and the passwords stored in a file
  */
 public class Users {
 
     private static final String DEFAULT_PASSWORD_PATH = "User-records.txt";
-    private final String password_path;
+    private final Path password_path;
 
     public Users() {
         this(DEFAULT_PASSWORD_PATH);
     }
 
     public Users(String path) {
+        this(Paths.get(path));
+    }
+
+    public Users(Path path) {
         password_path = path;
 
-        if (!Files.exists(Paths.get(password_path))) {
+        if (!Files.exists(password_path)) {
             try {
-                Files.createFile(Paths.get(password_path));
+                Files.createFile(password_path);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -37,13 +41,24 @@ public class Users {
     }
 
     /**
-     * @return The BackendStuff.User with the provided name, or if name does not exists, then null
+     * @return The User with the provided name, or if name does not exists, then null
      */
     public User getUser(String username) throws IOException {
+        if (username == null) return null;
+
         return getAllUsers()
                 .filter(user -> user.name.equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * @return The users role
+     * @throws IOException, file stuff can always throw IOExceptions
+     */
+    public Role usersRole(String username) throws IOException {
+        User user = getUser(username);
+        return (user == null) ? null : user.role;
     }
 
     /**
@@ -65,7 +80,7 @@ public class Users {
                 .map(User::toString)
                 .forEach(output::append);
 
-        Files.write(Paths.get(password_path), output.toString().getBytes(), StandardOpenOption.WRITE);
+        Files.write(password_path, output.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     /**
@@ -85,12 +100,12 @@ public class Users {
         updateUser(username, user -> null);
     }
 
-    protected String[] allLinesInFile() throws IOException {
-        return new String(Files.readAllBytes(Paths.get(password_path))).split("\n");
+    protected Stream<String> allLinesInFile() throws IOException {
+        return Files.lines(password_path);
     }
 
     private Stream<User> getAllUsers() throws IOException {
-        return Arrays.stream(allLinesInFile())
+        return allLinesInFile()
                 .filter(str -> !str.isEmpty())
                 .map(line -> {
                     try {
@@ -117,7 +132,7 @@ public class Users {
      */
     public void addUser(User user) throws IOException {
         String lineToAppend = user.toString();
-        Files.write(Paths.get(password_path), lineToAppend.getBytes(), StandardOpenOption.APPEND);
+        Files.write(password_path, lineToAppend.getBytes(), StandardOpenOption.APPEND);
     }
 
     /**
@@ -134,6 +149,6 @@ public class Users {
      * Clear the password file
      */
     public void clearFile() throws IOException {
-        Files.write(Paths.get(password_path), "".getBytes());
+        Files.write(password_path, "".getBytes());
     }
 }

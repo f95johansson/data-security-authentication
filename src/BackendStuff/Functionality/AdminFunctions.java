@@ -1,9 +1,6 @@
 package BackendStuff.Functionality;
 
-import BackendStuff.NonNullOrException;
-import BackendStuff.StringOrException;
-import BackendStuff.Mains.UserRegistration;
-import BackendStuff.Users;
+import BackendStuff.*;
 import Roles.Role;
 
 import java.io.IOException;
@@ -39,5 +36,18 @@ public class AdminFunctions {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Role lookUpUserRole(String username) {
+        if (username == null) return null;
+
+        try {
+            User user = users.getUser(username);
+            return user.role;
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

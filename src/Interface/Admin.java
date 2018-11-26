@@ -14,4 +14,5 @@ public interface Admin extends Remote {
     void removeUser(String username, String sessionKey) throws RemoteException;
     void changeUserRole(String username, Role newRole, String sessionKey) throws RemoteException;
     String logInAsAdmin(String username, String password) throws RemoteException;
+    Role lookUpUserRole(String username, String sessionKey) throws RemoteException;
 }

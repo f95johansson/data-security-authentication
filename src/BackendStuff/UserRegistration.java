@@ -1,8 +1,5 @@
-package BackendStuff.Mains;
+package BackendStuff;
 
-import BackendStuff.Crypto;
-import BackendStuff.User;
-import BackendStuff.Users;
 import Roles.Role;
 
 import java.io.IOException;
@@ -13,10 +10,10 @@ import java.security.spec.InvalidKeySpecException;
  * Provides registering a new user functionality
  */
 public class UserRegistration {
-    private Users keeper;
+    private Users users;
 
-    public UserRegistration(Users keeper) {
-        this.keeper = keeper;
+    public UserRegistration(Users users) {
+        this.users = users;
     }
 
     /**
@@ -25,7 +22,7 @@ public class UserRegistration {
      */
     public boolean addUser(String username, String password, Role role) {
         try {
-            if (keeper.userWithNameExists(username)) return false;
+            if (users.userWithNameExists(username)) return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -42,7 +39,7 @@ public class UserRegistration {
         }
 
         try {
-            keeper.addUser(new User(username, role, salt, hashedPassword));
+            users.addUser(new User(username, role, salt, hashedPassword));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -56,13 +53,9 @@ public class UserRegistration {
      */
     public void burnThePlace() {
         try {
-            keeper.clearFile();
+            users.clearFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        new UserRegistration(new Users()).addUser("admin", "admin", Role.ADMIN);
     }
 }

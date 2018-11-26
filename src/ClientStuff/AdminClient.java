@@ -54,7 +54,7 @@ public class AdminClient {
         String username;
         String password;
 
-        while(sessionKey == null) {
+        while (sessionKey == null) {
             username = getLine("username: ");
             password = getLine("password: ");
             sessionKey = admin.logInAsAdmin(username, password);
@@ -79,9 +79,10 @@ public class AdminClient {
             try {
                 System.out.println(
                         "\taddUser(username, password, role)" +
-                        "\tremoveUser(username)" +
-                        "\tchangeUserRole(username, newRole)"
-                    );
+                                "\tremoveUser(username)" +
+                                "\tchangeUserRole(username, newRole)" +
+                                "\tlookupuserrole(username)"
+                );
 
                 String line = getLine("Write function: ").trim().toLowerCase();
 
@@ -92,7 +93,7 @@ public class AdminClient {
 
                     final Pattern threeParams = Pattern.compile(name + "\\(" + name + ",[ ]?" + name + ",[ ]?" + name + "\\)");
                     final Pattern twoParams = Pattern.compile(name + "\\(" + name + ",[ ]?" + name + "\\)");
-                    final Pattern oneParam = Pattern.compile(name + "\\("+ name + "\\)");
+                    final Pattern oneParam = Pattern.compile(name + "\\(" + name + "\\)");
 
                     Matcher matches = threeParams.matcher(line);
 
@@ -118,7 +119,7 @@ public class AdminClient {
                 }
 
 
-            } catch(RemoteException e){
+            } catch (RemoteException e) {
                 throw e;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -156,7 +157,7 @@ public class AdminClient {
     }
 
     private static void run(String name, String arg1) throws RemoteException {
-        if (name.equals("removeuser")) {
+        if (name.toLowerCase().equals("removeuser")) {
             try {
                 admin.removeUser(arg1, sessionKey);
                 System.out.println("Removed user");
@@ -164,6 +165,11 @@ public class AdminClient {
                 System.err.println("Could not convert " + arg1 + " to int");
             }
 
+            return;
+        }
+
+        if (name.toLowerCase().equals("lookupuserrole")) {
+            System.out.println(admin.lookUpUserRole(arg1, sessionKey));
             return;
         }
 

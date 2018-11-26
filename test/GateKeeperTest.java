@@ -1,5 +1,5 @@
 import BackendStuff.GateKeeper;
-import BackendStuff.Mains.UserRegistration;
+import BackendStuff.UserRegistration;
 import Roles.Method;
 import Roles.Role;
 import org.junit.Before;

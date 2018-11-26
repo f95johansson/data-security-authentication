@@ -37,16 +37,28 @@ public class GateKeeper {
         } else if (sessionInfo.expirationTime.isBefore(LocalDateTime.now())) {
             sessionKeys.remove(sessionKey);
             return null;
-        } else if (!sessionInfo.user.role.isAllowed(nameOfMethod)){
+        }
+
+        try {
+            User user = users.getUser(sessionInfo.username);
+            if (user == null) return null;
+            return user.role.isAllowed(nameOfMethod) ? user : null;
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
-        } else {
-            return sessionInfo.user;
         }
     }
 
     public User getUser(String sessionKey) {
         SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
-        return sessionInfo == null ? null : sessionInfo.user;
+        if (sessionInfo == null) return null;
+
+        try {
+            return users.getUser(sessionInfo.username);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -67,7 +79,7 @@ public class GateKeeper {
             e.printStackTrace();
             return null;
         }
-        sessionKeys.put(sessionKey, new SessionInfo(user, LocalDateTime.now().plusHours(2)));
+        sessionKeys.put(sessionKey, new SessionInfo(user.name, LocalDateTime.now().plusHours(2)));
         return sessionKey;
     }
 
@@ -90,7 +102,7 @@ public class GateKeeper {
      * @param password - The password (unhashed)
      * @return The user if the client got successfully authenticated, null otherwise
      */
-    private User validLogin(String username, String password) {
+    public User validLogin(String username, String password) {
         try {
             User user = users.getUser(User.formatUserName(username));
 

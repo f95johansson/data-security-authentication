@@ -1,33 +1,42 @@
 import BackendStuff.Mains.Backend;
 import BackendStuff.Status;
-import BackendStuff.Mains.UserRegistration;
+import BackendStuff.UserRegistration;
 import BackendStuff.Users;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
 import Roles.Role;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import static org.junit.Assert.*;
 
-public class ClientTest {
+public class ClientFunctionalityTest {
 
     private static RMIPrinter rmiPrinter;
     private static String sessionKey;
 
+    @ClassRule
+    public static TemporaryFolder folder = new TemporaryFolder();
+
+    private static int unique = 0;
+
     @BeforeClass
     public static void SetPrinter() throws IOException {
-        Backend.startServer(8081);
 
-        Users keeper = new Users();
-        if (!keeper.userWithNameExists("hej")) {
-            UserRegistration userRegistration = new UserRegistration(keeper);
+        Users users = new Users(folder.newFile(unique++ + ".txt").getAbsolutePath());
+
+        Backend.startServer(8081, users);
+
+        System.err.println("hi");
+
+        if (!users.userWithNameExists("hej")) {
+            UserRegistration userRegistration = new UserRegistration(users);
             userRegistration.addUser("hej", "password", Role.ADMIN);
         }
 

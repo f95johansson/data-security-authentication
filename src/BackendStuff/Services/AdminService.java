@@ -54,12 +54,18 @@ public class AdminService extends UnicastRemoteObject implements Admin {
 
         boolean succeeded = af.changeUserRole(new StringOrException(username), new NonNullOrException<>(newRole));
 
-        if (succeeded)
+        if (!succeeded)
             throw new RemoteException("Could not change the users role for some reason, check backend-log");
     }
 
     @Override
-    public String logInAsAdmin(String username, String password) throws RemoteException {
+    public Role lookUpUserRole(String username, String sessionKey) throws RemoteException {
+        assertUserIsAdmin(sessionKey, LOOK_UP_USER_ROLE);
+        return af.lookUpUserRole(username);
+    }
+
+    @Override
+    public String logInAsAdmin(String username, String password) {
         if (username == null || password == null) return null;
 
         String sessionKey = gateKeeper.startSession(username, password);

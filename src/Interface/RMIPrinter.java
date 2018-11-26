@@ -28,4 +28,6 @@ public interface RMIPrinter extends Remote {
 
     //returns sessionkey
     String logIn(String username, String password) throws RemoteException;
+
+    boolean changeMyPassword(String username, String oldPassword, String newPassword) throws RemoteException;
 }
