@@ -1,20 +1,38 @@
 package Roles;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static Roles.Method.*;
-
 public enum Role {
-    ADMIN(Method.values()),
-    MAINTAINER(START, STOP, RESTART, STATUS),
-    POWER_USER(PRINT, QUEUE, RESTART, TOP_QUEUE),
-    USER(PRINT, QUEUE);
+    ADMIN,
+    MAINTAINER,
+    POWER_USER,
+    USER;
 
     private final Set<Method> allowed;
-    Role(Method... methods) {
-        allowed = Arrays.stream(methods).collect(Collectors.toSet());
+    Role() {
+        try {
+            allowed =
+                Files.lines(Paths.get("Role-policy.txt"))
+                        .filter(str -> str.startsWith(name()))
+                        .flatMap(l -> {
+                            List<String> words =
+                                    Arrays.stream(l.split(","))
+                                            .collect(Collectors.toCollection(LinkedList::new));
+                            words.remove(0);
+                            return words.stream();
+                        })
+                        .map(String::trim)
+                        .map(Method::valueOf)
+                        .collect(Collectors.toCollection(HashSet::new));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Enum policy for" + name() + "not found");
+        }
     }
 
     public boolean isAllowed(Method method) {
