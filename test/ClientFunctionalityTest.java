@@ -28,12 +28,8 @@ public class ClientFunctionalityTest {
 
     @BeforeClass
     public static void SetPrinter() throws IOException {
-
         Users users = new Users(folder.newFile(unique++ + ".txt").getAbsolutePath());
-
         Backend.startServer(8081, users);
-
-        System.err.println("hi");
 
         if (!users.userWithNameExists("hej")) {
             UserRegistration userRegistration = new UserRegistration(users);

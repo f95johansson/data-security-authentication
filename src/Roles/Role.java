@@ -31,7 +31,7 @@ public enum Role {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Enum policy for" + name() + "not found");
+            throw new RuntimeException("Fix the Role-policy.txt document and rerun the program");
         }
     }
 
