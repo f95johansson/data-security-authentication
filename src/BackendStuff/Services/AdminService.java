@@ -7,7 +7,6 @@ import BackendStuff.SafeTypes.NonNullString;
 import Interface.Admin;
 import static Roles.Method.*;
 import Roles.Method;
-import Roles.Role;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -32,9 +31,9 @@ public class AdminService extends UnicastRemoteObject implements Admin {
     }
 
     @Override
-    public void addUser(String username, String password, Role role, String sessionKey) throws RemoteException {
+    public void addUser(String username, String password, String role, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, ADD_USER);
-        boolean succeeded = af.addUser(new NonNullString(username), new NonNullString(password), new NonNull<>(role));
+        boolean succeeded = af.addUser(new NonNullString(username), new NonNullString(password), new NonNullString(role));
 
         if (!succeeded)
             throw new RemoteException("Username is taken");
@@ -51,17 +50,17 @@ public class AdminService extends UnicastRemoteObject implements Admin {
     }
 
     @Override
-    public void changeUserRole(String username, Role newRole, String sessionKey) throws RemoteException {
+    public void changeUserRole(String username, String newRole, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, CHANGE_USER_ROLE);
 
-        boolean succeeded = af.changeUserRole(new NonNullString(username), new NonNull<>(newRole));
+        boolean succeeded = af.changeUserRole(new NonNullString(username), new NonNullString(newRole));
 
         if (!succeeded)
             throw new RemoteException("Could not change the users role for some reason, check backend-log");
     }
 
     @Override
-    public Role lookUpUserRole(String username, String sessionKey) throws RemoteException {
+    public String lookUpUserRole(String username, String sessionKey) throws RemoteException {
         assertUserIsAdmin(sessionKey, LOOK_UP_USER_ROLE);
         return af.lookUpUserRole(username);
     }
@@ -76,7 +75,7 @@ public class AdminService extends UnicastRemoteObject implements Admin {
         User user = gateKeeper.getUser(sessionKey);
         if (user == null) return null;
 
-        if (user.role != Role.ADMIN) return null;
+        if (!user.role.equals("ADMIN")) return null;
 
         return sessionKey;
     }

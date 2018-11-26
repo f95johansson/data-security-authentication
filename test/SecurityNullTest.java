@@ -3,7 +3,6 @@ import BackendStuff.Mains.Backend;
 import BackendStuff.UserRegistration;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
-import Roles.Role;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class SecurityNullTest {
         UserRegistration userRegistration = new UserRegistration(new MockUsers());
         String name = "validUser";
         String psw = "validPassw0rd";
-        userRegistration.addUser(name, psw, Role.ADMIN);
+        userRegistration.addUser(name, psw, "ADMIN");
 
         //adds one real key to the system
         final int port = 8080;

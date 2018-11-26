@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static Roles.Role.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,10 +20,10 @@ public class RolesSecurity {
         Users users = new MockUsers();
         UserRegistration ur = new UserRegistration(users);
 
-        ur.addUser("Bob", "kittensWithMittens", MAINTAINER);
-        ur.addUser("Cecilia", "eyeOfTheTiger", POWER_USER);
+        ur.addUser("Bob", "kittensWithMittens", "MAINTAINER");
+        ur.addUser("Cecilia", "eyeOfTheTiger", "POWER_USER");
 
-        ur.addUser("David", "dogPerson", USER);
+        ur.addUser("David", "dogPerson", "USER");
 
         printerService = new PrinterService(users);
         adminService = new AdminService(users);

@@ -1,13 +1,10 @@
 package BackendStuff;
 
-import Roles.Role;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
@@ -56,7 +53,7 @@ public class Users {
      * @return The users role
      * @throws IOException, file stuff can always throw IOExceptions
      */
-    public Role usersRole(String username) throws IOException {
+    public String usersRole(String username) throws IOException {
         User user = getUser(username);
         return (user == null) ? null : user.role;
     }
@@ -92,7 +89,7 @@ public class Users {
         updateUser(username, user -> new User(username, user.role, newSalt, newHashPassword));
     }
 
-    public void updateUserRole(String username, Role newRole) throws IOException {
+    public void updateUserRole(String username, String newRole) throws IOException {
         updateUser(username, user -> new User(user.name, newRole, user.salt, user.salt));
     }
 
@@ -110,9 +107,8 @@ public class Users {
                 .map(line -> {
                     try {
                         String[] words = line.split(",");
-                        Role role = Role.fromString(words[1]);
-                        if (role == null) throw new NullPointerException();
-                        return new User(words[0], role, words[2], words[3]);
+
+                        return new User(words[0], words[1], words[2], words[3]);
 
                     } catch (IndexOutOfBoundsException e) {
                         System.err.println("line: " + line + " was incorrectly formatted");

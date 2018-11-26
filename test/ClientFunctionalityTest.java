@@ -4,13 +4,11 @@ import BackendStuff.UserRegistration;
 import BackendStuff.Users;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
-import Roles.Role;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -33,7 +31,7 @@ public class ClientFunctionalityTest {
 
         if (!users.userWithNameExists("hej")) {
             UserRegistration userRegistration = new UserRegistration(users);
-            userRegistration.addUser("hej", "password", Role.ADMIN);
+            userRegistration.addUser("hej", "password", "ADMIN");
         }
 
         try {

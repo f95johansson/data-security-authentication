@@ -2,14 +2,12 @@ import BackendStuff.Services.AdminService;
 import BackendStuff.UserRegistration;
 import BackendStuff.Services.PrinterService;
 import BackendStuff.Users;
-import Roles.Role;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-import static Roles.Role.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class ChangingUsers {
@@ -33,8 +31,8 @@ public class ChangingUsers {
     public void before() throws IOException {
         Users users = new Users(folder.newFile((uniqueId++) + ".txt").getAbsolutePath());
         UserRegistration userRegistration = new UserRegistration(users);
-        userRegistration.addUser("admin", "admin", ADMIN);
-        userRegistration.addUser("user", "user", USER);
+        userRegistration.addUser("admin", "admin", "ADMIN");
+        userRegistration.addUser("user", "user", "USER");
 
         adminService = new AdminService(users);
         printerService = new PrinterService(users);
@@ -48,7 +46,7 @@ public class ChangingUsers {
         printerService.print("hej", "hej", userKey);
         assertThatThrownBy(() -> printerService.restart(userKey));
 
-        adminService.changeUserRole("user", Role.MAINTAINER, adminKey);
+        adminService.changeUserRole("user", "MAINTAINER", adminKey);
 
         assertThatThrownBy(() -> printerService.print("hej", "hej", userKey));
         printerService.restart(userKey);
@@ -66,21 +64,21 @@ public class ChangingUsers {
     @Test
     public void add_effects_immediately() throws RemoteException {
         assertThat(printerService.logIn("data", "security")).isNull();
-        adminService.addUser("data", "security", Role.USER, adminKey);
+        adminService.addUser("data", "security", "USER", adminKey);
         assertThat(printerService.logIn("data", "security")).isNotNull();
     }
 
     @Test
     public void changePassword() throws RemoteException {
-        adminService.addUser("data", "security", Role.USER, adminKey);
+        adminService.addUser("data", "security", "USER", adminKey);
         printerService.changeMyPassword("data", "security", "confidentiality");
         assertThat(printerService.logIn("data", "confidentiality")).isNotNull();
     }
 
     @Test
     public void migrateRole() throws RemoteException {
-        adminService.addUser("Bob", "DogsAreOkay", Role.MAINTAINER, adminKey);
-        Role oldRole = adminService.lookUpUserRole("Bob", adminKey);
+        adminService.addUser("Bob", "DogsAreOkay", "MAINTAINER", adminKey);
+        String oldRole = adminService.lookUpUserRole("Bob", adminKey);
         adminService.removeUser("Susan", adminKey);
         adminService.addUser("Susan", "xf124ss", oldRole, adminKey);
         assertThat(printerService.changeMyPassword("Susan", "xf124ss", "CatsAreHats")).isTrue();

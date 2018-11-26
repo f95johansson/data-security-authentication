@@ -3,7 +3,6 @@ import BackendStuff.UserRegistration;
 import BackendStuff.Users;
 import ClientStuff.AdminClient;
 import Interface.Admin;
-import static Roles.Role.*;
 
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -33,7 +32,7 @@ public class AdminTest {
 
         Users users = new Users(folder.newFile(val + ".txt").getAbsolutePath());
         UserRegistration ur = new UserRegistration(users);
-        ur.addUser("admin", "admin", ADMIN);
+        ur.addUser("admin", "admin", "ADMIN");
 
         BackendAdmin.startServer(port, users);
         client = AdminClient.startAdminClient(port);
@@ -43,29 +42,29 @@ public class AdminTest {
     @Test
     public void can_add_one_user() throws RemoteException {
         String name = "oskar";
-        client.addUser(name, "whatever", ADMIN, sessionKey);
+        client.addUser(name, "whatever", "ADMIN", sessionKey);
     }
 
     @Test(expected = RemoteException.class)
     public void cannot_add_two_users_with_same_name() throws RemoteException {
         String name = "oskar";
-        client.addUser(name, "whatever", ADMIN, sessionKey);
-        client.addUser(name, "whatever_else", ADMIN, sessionKey);
+        client.addUser(name, "whatever", "ADMIN", sessionKey);
+        client.addUser(name, "whatever_else", "ADMIN", sessionKey);
     }
 
     @Test(expected = RemoteException.class)
     public void cannot_use_null() throws RemoteException {
-        client.addUser(null, "legit", ADMIN, sessionKey);
+        client.addUser(null, "legit", "ADMIN", sessionKey);
     }
 
     @Test(expected = RemoteException.class)
     public void cannot_use_null_as_username() throws RemoteException {
-        client.addUser(null, "legit", ADMIN, sessionKey);
+        client.addUser(null, "legit", "ADMIN", sessionKey);
     }
 
     @Test(expected = RemoteException.class)
     public void cannot_use_null_as_password() throws RemoteException {
-        client.addUser("legit", null, ADMIN, sessionKey);
+        client.addUser("legit", null, "ADMIN", sessionKey);
     }
 
     @Test(expected = RemoteException.class)
@@ -80,7 +79,7 @@ public class AdminTest {
 
     @Test(expected = RemoteException.class)
     public void cannot_use_null_as_username_when_changing_role() throws RemoteException {
-        client.changeUserRole(null, POWER_USER, sessionKey);
+        client.changeUserRole(null, "POWER_USER", sessionKey);
     }
 
     @Test(expected = RemoteException.class)

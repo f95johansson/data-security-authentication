@@ -1,6 +1,5 @@
 package BackendStuff;
 
-import Roles.Role;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +19,7 @@ public class UserRegistration {
      * Register a new user
      * @return True if successfull, false if failed or user already exists
      */
-    public boolean addUser(String username, String password, Role role) {
+    public boolean addUser(String username, String password, String role) {
         try {
             if (users.userWithNameExists(username)) return false;
         } catch (IOException e) {

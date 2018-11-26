@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static Roles.Role.*;
 
 public class RolesAvailability {
 
@@ -19,11 +18,11 @@ public class RolesAvailability {
         users = new MockUsers();
         UserRegistration ur = new UserRegistration(users);
 
-        ur.addUser("Alice", "CatsRuleDogsDrool", ADMIN);
-        ur.addUser("Bob", "kittensWithMittens", MAINTAINER);
-        ur.addUser("Cecilia", "eyeOfTheTiger", POWER_USER);
+        ur.addUser("Alice", "CatsRuleDogsDrool", "ADMIN");
+        ur.addUser("Bob", "kittensWithMittens", "MAINTAINER");
+        ur.addUser("Cecilia", "eyeOfTheTiger", "POWER_USER");
 
-        ur.addUser("David", "dogPerson", USER);
+        ur.addUser("David", "dogPerson", "USER");
 
         printerService = new PrinterService(users);
     }
@@ -45,8 +44,8 @@ public class RolesAvailability {
         AdminService as = new AdminService(users);
 
         String sKey2 = as.logInAsAdmin("Alice", "CatsRuleDogsDrool");
-        as.addUser("hej", "hej", USER, sKey2);
-        as.changeUserRole("hej", POWER_USER, sKey2);
+        as.addUser("hej", "hej", "USER", sKey2);
+        as.changeUserRole("hej", "POWER_USER", sKey2);
         as.lookUpUserRole("hej", sKey2);
         as.removeUser("hej", sKey2);
     }

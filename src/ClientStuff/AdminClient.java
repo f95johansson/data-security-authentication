@@ -1,8 +1,6 @@
 package ClientStuff;
 
 import Interface.Admin;
-import Interface.RMIPrinter;
-import Roles.Role;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -131,12 +129,7 @@ public class AdminClient {
 
     private static void run(String name, String arg1, String arg2, String arg3) throws RemoteException {
         if (name.equals("adduser")) {
-            Role role = Role.fromString(arg3.toUpperCase());
-
-            if (role == null) {
-                System.out.println("The role " + arg3 + " does not exist");
-                return;
-            }
+            String role = arg3.toUpperCase();
 
             admin.addUser(arg1, arg2, role, sessionKey);
             System.out.println("Added user with role " + role);
@@ -148,8 +141,7 @@ public class AdminClient {
 
     private static void run(String name, String arg1, String arg2) throws RemoteException {
         if (name.equals("changeuserrole")) {
-            Role role = Role.fromString(arg2.toUpperCase());
-            admin.changeUserRole(arg1, role, sessionKey);
+            admin.changeUserRole(arg1, arg2.toUpperCase(), sessionKey);
             System.out.println("Changed user role");
             return;
         }

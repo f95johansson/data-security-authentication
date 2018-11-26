@@ -1,7 +1,6 @@
 import BackendStuff.GateKeeper;
 import BackendStuff.UserRegistration;
 import Roles.Method;
-import Roles.Role;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ public class GateKeeperTest {
 
     private void addAdmin(String username, String password) {
         UserRegistration ids = new UserRegistration(mockUsers);
-        ids.addUser(username, password, Role.ADMIN);
+        ids.addUser(username, password, "ADMIN");
     }
 
     @Before

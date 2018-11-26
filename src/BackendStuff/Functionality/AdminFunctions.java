@@ -1,9 +1,7 @@
 package BackendStuff.Functionality;
 
 import BackendStuff.*;
-import BackendStuff.SafeTypes.NonNull;
 import BackendStuff.SafeTypes.NonNullString;
-import Roles.Role;
 
 import java.io.IOException;
 
@@ -15,7 +13,7 @@ public class AdminFunctions {
         this.users = users;
     }
 
-    public boolean addUser(NonNullString username, NonNullString password, NonNull<Role> role) {
+    public boolean addUser(NonNullString username, NonNullString password, NonNullString role) {
         UserRegistration usr = new UserRegistration(users);
         return usr.addUser(username.value, password.value, role.value);
     }
@@ -30,7 +28,7 @@ public class AdminFunctions {
         }
     }
 
-    public boolean changeUserRole(NonNullString username, NonNull<Role> newRole) {
+    public boolean changeUserRole(NonNullString username, NonNullString newRole) {
         try {
             users.updateUserRole(username.value, newRole.value);
             return true;
@@ -40,7 +38,7 @@ public class AdminFunctions {
         }
     }
 
-    public Role lookUpUserRole(String username) {
+    public String lookUpUserRole(String username) {
         if (username == null) return null;
 
         try {

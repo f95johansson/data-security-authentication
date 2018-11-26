@@ -1,6 +1,7 @@
 package BackendStuff;
 
 import Roles.Method;
+import Roles.RoleCheck;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -25,10 +26,10 @@ public class GateKeeper {
      * Gets the name of the user that was provided that session key
      *
      * @param sessionKey - The session key in question
-     * @param nameOfMethod, the function that calls this function as an enum
+     * @param method, the function that calls this function as an enum
      * @return null if it is not valid, the user otherwise
      */
-    public User validSessionKey(String sessionKey, Method nameOfMethod) {
+    public User validSessionKey(String sessionKey, Method method) {
         if (sessionKey == null) return null;
 
         SessionInfo sessionInfo = sessionKeys.getOrDefault(sessionKey, null);
@@ -42,7 +43,7 @@ public class GateKeeper {
         try {
             User user = users.getUser(sessionInfo.username);
             if (user == null) return null;
-            return user.role.isAllowed(nameOfMethod) ? user : null;
+            return RoleCheck.isAllowed(user.role, method) ? user : null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

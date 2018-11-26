@@ -1,6 +1,5 @@
 import BackendStuff.User;
 import BackendStuff.Users;
-import Roles.Role;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +28,7 @@ public class MockUsers extends Users {
     }
 
     @Override
-    public void updateUserRole(String username, Role newRole)  {
+    public void updateUserRole(String username, String newRole)  {
         //Not implemented
     }
 

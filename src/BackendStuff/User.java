@@ -1,7 +1,5 @@
 package BackendStuff;
 
-import Roles.Role;
-
 /**
  * Holds user information
  */
@@ -10,9 +8,9 @@ public class User {
     public final String name;
     public final String salt;
     public final String hashedPassword;
-    public final Role role;
+    public final String role;
 
-    public User(String name, Role role, String salt, String hashedPassword) {
+    public User(String name, String role, String salt, String hashedPassword) {
         this.name = User.formatUserName(name);
         this.salt = salt;
         this.hashedPassword = hashedPassword;
@@ -20,7 +18,7 @@ public class User {
     }
 
     public String toString() {
-        return String.format("%s,%s,%s,%s\n", name, role.name(), salt, hashedPassword);
+        return String.format("%s,%s,%s,%s\n", name, role, salt, hashedPassword);
     }
 
     /**
@@ -30,7 +28,7 @@ public class User {
         return username.replace(",", "");
     }
 
-    public User withRole(Role role) {
+    public User withRole(String role) {
         return new User(name, role, salt, hashedPassword);
     }
 }
