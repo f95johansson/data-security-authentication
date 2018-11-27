@@ -105,8 +105,8 @@ public class GateKeeper {
      */
     public User validLogin(String username, String password) {
         try {
-            User user = users.getUser(User.formatUserName(username));
 
+            User user = users.getUser(User.formatUserName(username));
             if (user == null) return null;
 
             if (user.hashedPassword.equals(Crypto.toHash(password, user.salt))) {
@@ -114,7 +114,6 @@ public class GateKeeper {
             }
 
             return null;
-
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.err.println(e.getMessage());
             return null;
