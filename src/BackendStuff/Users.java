@@ -50,15 +50,6 @@ public class Users {
     }
 
     /**
-     * @return The users role
-     * @throws IOException, file stuff can always throw IOExceptions
-     */
-    public String usersRole(String username) throws IOException {
-        User user = getUser(username);
-        return (user == null) ? null : user.role;
-    }
-
-    /**
      * Update the salt and password for the specified user
      *
      * @throws IOException could not write to password file
@@ -90,7 +81,7 @@ public class Users {
     }
 
     public void updateUserRole(String username, String newRole) throws IOException {
-        updateUser(username, user -> new User(user.name, newRole, user.salt, user.salt));
+        updateUser(username, user -> new User(user.name, newRole, user.salt, user.hashedPassword));
     }
 
     public void removeUser(String username) throws IOException {

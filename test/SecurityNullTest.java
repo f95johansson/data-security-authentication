@@ -4,7 +4,9 @@ import BackendStuff.UserRegistration;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;

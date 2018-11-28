@@ -5,9 +5,11 @@ import BackendStuff.Users;
 import ClientStuff.Client;
 import Interface.RMIPrinter;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -16,17 +18,23 @@ import java.rmi.RemoteException;
  */
 public class SecurityTest {
 
+    @ClassRule
+    public static TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private static RMIPrinter printer;
     @BeforeClass
-    public static void StartUp() throws RemoteException, NotBoundException, MalformedURLException {
-        UserRegistration userRegistration = new UserRegistration(new Users());
+    public static void StartUp() throws IOException, NotBoundException {
+        String path = temporaryFolder.newFile("users.txt").getAbsolutePath();
+
+        Users users = new Users(path);
+        UserRegistration userRegistration = new UserRegistration(users);
         String name = "validUser";
         String psw = "validPassw0rd";
         userRegistration.addUser(name, psw, "ADMIN");
 
         //adds one real key to the system
         final int port = 8181;
-        Backend.startServer(port);
+        Backend.startServer(port, users);
         printer = Client.startClient(port);
         printer.logIn(name, psw);
     }
