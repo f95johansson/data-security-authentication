@@ -19,10 +19,9 @@ public class ClientTest {
         Backend.startServer(8081);
 
         Users keeper = new Users();
-        if (!keeper.userWithNameExists("hej")) {
-            UserRegistration userRegistration = new UserRegistration(keeper);
-            userRegistration.addUser("hej", "password");
-        }
+        UserRegistration userRegistration = new UserRegistration(keeper);
+        userRegistration.addUser("hej", "password");
+        userRegistration.updateUserPermission("hej", "restart", "setConfig", "readConfig", "print", "stop", "start", "status", "queue");
 
         try {
             rmiPrinter = Client.startClient(8081);

@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,9 +10,9 @@ public class User {
     public final String username;
     public final String salt;
     public final String hash;
-    public final Set<Permissions> permissions;
+    public final Set<String> permissions;
 
-    public User(String username, String salt, String hash, Set<Permissions> permissions) {
+    public User(String username, String salt, String hash, Set<String> permissions) {
         this.username = User.formatUserName(username);
         this.salt = salt;
         this.hash = hash;
@@ -21,11 +20,11 @@ public class User {
     }
 
     public User(String username, String salt, String hash, String[] permissions) {
-        this(username, salt, hash, Arrays.stream(permissions).map(Permissions::fromString).filter(Objects::nonNull).collect(Collectors.toSet()));
+        this(username, salt, hash, Arrays.stream(permissions).collect(Collectors.toSet()));
     }
 
     public String toString() {
-        return String.format("%s,%s,%s,%s", formatUserName(username), salt, hash, permissions.stream().map(p -> p.string).collect(Collectors.joining(";")));
+        return String.format("%s,%s,%s,%s", formatUserName(username), salt, hash, permissions.stream().collect(Collectors.joining(";")));
     }
 
     /**

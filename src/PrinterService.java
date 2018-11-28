@@ -15,7 +15,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
 
     private int uniqueIDGenerator = 0;
     private final RemoteException NOT_LOGGED_IN_EXCEPTION = new RemoteException("You are not a valid user, please log in");
-    private final RemoteException PERMISSION_EXCEPTION = new RemoteException("You are don't have permission to use this method");
+    private final RemoteException PERMISSION_EXCEPTION = new RemoteException("You don't have permission to use this method");
 
     public PrinterService() throws RemoteException {
         super();
@@ -38,16 +38,17 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         return user;
     }
 
-    private void assertValidAccess(User user, Permissions permission) throws RemoteException {
+    private void assertValidAccess(User user, String permission) throws RemoteException {
         if (!user.permissions.contains(permission)) {
             throw PERMISSION_EXCEPTION;
         }
+        // print;queue;topQueue;start;stop;restart;status;readConfig;setConfig
     }
 
     @Override
     public int print(String filename, String printer, String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.PRINT);
+        assertValidAccess(user, "print");
 
         log(user.username, "PRINT", "(" + filename + ", " + printer + ")");
         return pushPrintJob(filename, printer);
@@ -62,7 +63,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public String queue(String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.QUEUE);
+        assertValidAccess(user, "queue");
 
         log(user.username, "QUEUE");
 
@@ -75,7 +76,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public void topQueue(int job, String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.TOP_QUEUE);
+        assertValidAccess(user, "topQueue");
         
         log(user.username, "TOP QUEUE", String.valueOf(job));
 
@@ -95,7 +96,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public void start(String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.START);
+        assertValidAccess(user, "start");
         
         log(user.username, "START");
         currentStatus = Status.On;
@@ -104,7 +105,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public void stop(String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.STOP);
+        assertValidAccess(user, "stop");
         
         log(user.username, "STOP");
         currentStatus = Status.Off;
@@ -113,7 +114,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public void restart(String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.RESTART);
+        assertValidAccess(user, "restart");
         
         log(user.username, "RESTART");
         stop(sessionKey);
@@ -124,7 +125,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public String status(String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.STATUS);
+        assertValidAccess(user, "status");
         
         log(user.username, "STATUS");
         return currentStatus.name();
@@ -133,7 +134,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public String readConfig(String parameter, String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.READ_CONFIG);
+        assertValidAccess(user, "readConfig");
         
         log(user.username, "READ CONFIG", parameter);
         return settings.getOrDefault(parameter, null);
@@ -142,7 +143,7 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
     @Override
     public void setConfig(String parameter, String value, String sessionKey) throws RemoteException {
         User user = getUserOrThrowRemoteException(sessionKey);
-        assertValidAccess(user, Permissions.SET_CONFIG);
+        assertValidAccess(user, "setConfig");
         
         log(user.username, "SET CONFIG", "(" + parameter + ", " + value + ")");
         settings.put(parameter, value);

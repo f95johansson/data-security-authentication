@@ -49,7 +49,7 @@ public class Users {
         }
     }
 
-    public void updatePermissions(String username, Set<Permissions> permissions) throws IOException {
+    public void updatePermissions(String username, Set<String> permissions) throws IOException {
         String content = getAllUsers()
                 .map(user -> {
                     if (user.username.equals(username)) {
@@ -66,7 +66,7 @@ public class Users {
         }
     }
 
-    public Set<Permissions> getPermissions(String username) throws IOException {
+    public Set<String> getPermissions(String username) throws IOException {
         try {
             return getUser(username).permissions;
         } catch (NullPointerException e) {
@@ -101,8 +101,23 @@ public class Users {
      * @throws IOException could not write
      */
     public void addUser(User user) throws IOException {
-        String lineToAppend = user.toString() + "\n";
+        String lineToAppend = "\n" + user.toString();
         Files.write(Paths.get(PASSWORD_PATH), lineToAppend.getBytes(), StandardOpenOption.APPEND);
+    }
+
+    /**
+     * Remove user from password file
+     * @throws IOException could not write
+     */
+    public void removeUser(String username) throws IOException {
+        String content = getAllUsers()
+                .filter(u -> !u.username.equals(username))
+                .map(User::toString)
+                .collect(Collectors.joining("\n"));
+
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PASSWORD_PATH))) {
+            writer.write(content);
+        }
     }
 
     /**
