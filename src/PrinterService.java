@@ -42,7 +42,6 @@ public class PrinterService extends UnicastRemoteObject implements RMIPrinter {
         if (!user.permissions.contains(permission)) {
             throw PERMISSION_EXCEPTION;
         }
-        // print;queue;topQueue;start;stop;restart;status;readConfig;setConfig
     }
 
     @Override
