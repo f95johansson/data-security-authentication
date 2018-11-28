@@ -12,7 +12,7 @@ import static org.junit.Assert.assertFalse;
 public class ScenarioTest {
 
     private static RMIPrinter printer;
-    private static final String[] tecnicianResponsibilities = new String[] {
+    private static final String[] technicianResponsibilities = new String[] {
             "start",
             "stop",
             "restart",
@@ -76,7 +76,7 @@ public class ScenarioTest {
         // set up scenario
         userRegistration.addUser("Bob", "password");
         userRegistration.addUser("George", "password");
-        userRegistration.updateUserPermission("Bob", tecnicianResponsibilities);
+        userRegistration.updateUserPermission("Bob", technicianResponsibilities);
         userRegistration.updateUserPermission("George", userPermissions);
 
         // transfer permissions
@@ -86,7 +86,7 @@ public class ScenarioTest {
 
         assertFalse(userRegistration.userExists("Bob"));
         assertArrayEquals(
-                Arrays.stream(tecnicianResponsibilities).sorted().toArray(String[]::new),
+                Arrays.stream(technicianResponsibilities).sorted().toArray(String[]::new),
                 Arrays.stream(userRegistration.getUserPermissions("George")).sorted().toArray(String[]::new));
     }
 
